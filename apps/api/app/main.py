@@ -52,8 +52,8 @@ app.add_middleware(
 
 
 @app.middleware("http")
-async def request_context_middleware(request: Request, call_next) -> Response:
-    """Attaches unique request ID and logs structured HTTP metrics."""
+async def security_and_context_middleware(request: Request, call_next) -> Response:
+    """Attaches unique request ID, enforces DPDP security headers, and logs structured HTTP metrics."""
     req_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
     token = request_id_ctx.set(req_id)
     start_time = time.time()
@@ -62,6 +62,15 @@ async def request_context_middleware(request: Request, call_next) -> Response:
         response = await call_next(request)
         duration_ms = round((time.time() - start_time) * 1000, 2)
         response.headers["X-Request-ID"] = req_id
+
+        # DPDP & OWASP Recommended Security Headers
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+        if settings.APP_ENV == "production":
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
 
         # Skip noisy polling endpoints from logs
         if not request.url.path.endswith("/health/live"):
@@ -75,6 +84,7 @@ async def request_context_middleware(request: Request, call_next) -> Response:
         raise
     finally:
         request_id_ctx.reset(token)
+
 
 
 # Register Exception Handlers

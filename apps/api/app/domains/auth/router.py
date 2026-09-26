@@ -39,8 +39,16 @@ async def get_current_user_id(
     if x_user_id:
         return x_user_id
 
-    # Fallback to default demo user ID for backward compatibility
-    return "00000000-0000-0000-0000-000000000001"
+    # Fallback to default demo user ID only in development and testing
+    if settings.APP_ENV in ("development", "test"):
+        return "00000000-0000-0000-0000-000000000001"
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Authentication credentials required.",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
 
 
 @router.post(

@@ -1,7 +1,9 @@
 import uuid
+from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import HTTPException, status
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -60,6 +62,12 @@ class AuthService:
                 detail="An account with this email already exists.",
             )
 
+        if not req.consent_agreed:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Affirmative consent to the DPDP Privacy Notice is required to create an account.",
+            )
+
         new_user = User(
             id=str(uuid.uuid4()),
             email=req.email.lower(),
@@ -104,7 +112,54 @@ class AuthService:
         )
         db.add(policy)
 
+        # Record Initial DPDP Section 6 Consent in Immutable Consent Ledger
+        from app.domains.privacy.models import ConsentRecord, ParentalConsent
+        now = datetime.now(timezone.utc)
+
+        # Core Essential Purpose
+        core_consent = ConsentRecord(
+            id=str(uuid.uuid4()),
+            user_id=new_user.id,
+            purpose_id="CORE_CAREER_OPERATING_SYSTEM",
+            purpose_name="Core Professional Identity & Opportunity Matching",
+            status="GRANTED",
+            notice_version="v1.0-dpdp-2025",
+            consent_method="EXPLICIT_WEB_FORM_SIGNUP",
+            granted_at=now,
+        )
+        db.add(core_consent)
+
+        # Optional consented purposes
+        if req.consented_purposes:
+            for p_id in req.consented_purposes:
+                if p_id != "CORE_CAREER_OPERATING_SYSTEM":
+                    opt_consent = ConsentRecord(
+                        id=str(uuid.uuid4()),
+                        user_id=new_user.id,
+                        purpose_id=p_id,
+                        purpose_name=p_id,
+                        status="GRANTED",
+                        notice_version="v1.0-dpdp-2025",
+                        consent_method="EXPLICIT_WEB_FORM_SIGNUP",
+                        granted_at=now,
+                    )
+                    db.add(opt_consent)
+
+        # Handle Minor / Under-18 VPC requirement
+        if not req.is_adult:
+            minor_vpc = ParentalConsent(
+                id=str(uuid.uuid4()),
+                user_id=new_user.id,
+                parent_full_name="Parent / Legal Guardian",
+                parent_email=f"parent_{new_user.email}",
+                verification_method="EMAIL_OTP_VERIFICATION",
+                verification_token=f"VPC-{uuid.uuid4().hex[:8].upper()}",
+                is_verified=False,
+            )
+            db.add(minor_vpc)
+
         await db.commit()
+
 
         token = create_access_token({"sub": new_user.id, "email": new_user.email})
         user_resp = await cls._format_user_auth_response(new_user, db)

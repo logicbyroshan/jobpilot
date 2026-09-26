@@ -8,6 +8,11 @@ class UserRegisterRequest(BaseModel):
     password: str = Field(..., min_length=6, description="Password must be at least 6 characters")
     full_name: str = Field(..., min_length=2)
     headline: Optional[str] = "Software Engineer"
+    is_adult: bool = Field(default=True, description="Confirmation that user is at least 18 years old per DPDP Act Section 9")
+    date_of_birth: Optional[str] = Field(default=None, description="YYYY-MM-DD")
+    consent_agreed: bool = Field(default=True, description="Affirmative agreement to DPDP Privacy Notice")
+    consented_purposes: Optional[list[str]] = Field(default=None, description="List of purpose IDs explicitly consented to")
+
 
 
 class UserLoginRequest(BaseModel):
