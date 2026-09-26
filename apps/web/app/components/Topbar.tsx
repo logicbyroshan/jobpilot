@@ -278,7 +278,23 @@ export function Topbar() {
                   Automation Settings
                 </Link>
 
+                <Link
+                  href="/settings/privacy"
+                  onClick={() => setShowProfileMenu(false)}
+                  style={{
+                    padding: "6px 8px",
+                    fontSize: "12px",
+                    color: "var(--accent-primary)",
+                    borderRadius: "4px",
+                    textDecoration: "none",
+                    fontWeight: 600,
+                  }}
+                >
+                  Privacy & DPDP Rights
+                </Link>
+
                 <div style={{ margin: "4px 0", height: "1px", background: "var(--border-subtle)" }} />
+
 
                 <button
                   onClick={() => {

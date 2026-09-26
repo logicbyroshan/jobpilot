@@ -18,8 +18,11 @@ function RegisterForm() {
   const [headline, setHeadline] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isAdult, setIsAdult] = useState(true);
+  const [consentAgreed, setConsentAgreed] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
 
   // Handle GitHub/LinkedIn OAuth Callback code
   useEffect(() => {
@@ -246,16 +249,49 @@ function RegisterForm() {
             required
           />
 
+          {/* DPDP Act 2023 Age Gate & Affirmative Consent */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "4px", padding: "10px", borderRadius: "var(--radius-sm)", background: "rgba(99, 102, 241, 0.05)", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: "8px", cursor: "pointer", fontSize: "12px", color: "var(--text-muted)", lineHeight: 1.4 }}>
+              <input
+                type="checkbox"
+                checked={isAdult}
+                onChange={(e) => setIsAdult(e.target.checked)}
+                style={{ marginTop: "2px", accentColor: "var(--accent-primary)" }}
+              />
+              <span>
+                I confirm that I am <strong>18 years of age or older</strong> (DPDP Act 2023 Section 9 Age Verification).
+              </span>
+            </label>
+
+            <label style={{ display: "flex", alignItems: "flex-start", gap: "8px", cursor: "pointer", fontSize: "12px", color: "var(--text-muted)", lineHeight: 1.4 }}>
+              <input
+                type="checkbox"
+                required
+                checked={consentAgreed}
+                onChange={(e) => setConsentAgreed(e.target.checked)}
+                style={{ marginTop: "2px", accentColor: "var(--accent-primary)" }}
+              />
+              <span>
+                I have read and affirmatively consent to the processing of my personal data in accordance with the{" "}
+                <Link href="/privacy" target="_blank" style={{ color: "var(--accent-primary)", textDecoration: "underline" }}>
+                  DPDP Privacy Notice
+                </Link>.
+              </span>
+            </label>
+          </div>
+
           <Button
             type="submit"
             variant="primary"
             loading={isLoading}
+            disabled={!consentAgreed}
             style={{ width: "100%", marginTop: "4px" }}
           >
             Create Account
           </Button>
         </form>
       </div>
+
 
       {/* Footer Link */}
       <div style={{ textAlign: "center", marginTop: "18px" }}>

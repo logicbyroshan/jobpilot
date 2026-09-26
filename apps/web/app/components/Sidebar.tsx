@@ -93,7 +93,15 @@ const secondaryItems: NavItem[] = [
     href: "/settings/automation",
     icon: Sliders,
   },
+  {
+    name: "Privacy & DPDP Rights",
+    href: "/settings/privacy",
+    icon: Shield,
+    tag: "DPDP 2025",
+    badgeVariant: "brand",
+  },
 ];
+
 
 export function Sidebar() {
   const pathname = usePathname();
