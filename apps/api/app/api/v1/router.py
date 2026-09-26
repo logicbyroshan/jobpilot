@@ -13,6 +13,7 @@ from app.domains.jobs.router import router as jobs_router
 from app.domains.learning.router import router as learning_router
 from app.domains.matching.router import router as matching_router
 from app.domains.outcomes.router import router as outcomes_router
+from app.domains.privacy.router import router as privacy_router
 from app.domains.skills.router import router as skills_router
 from app.domains.sources.router import router as sources_router
 
@@ -22,6 +23,7 @@ api_v1_router = APIRouter(prefix="/api/v1")
 api_v1_router.include_router(health_router)
 api_v1_router.include_router(overview_router)
 api_v1_router.include_router(auth_router, prefix="/auth", tags=["Auth"])
+api_v1_router.include_router(privacy_router)
 api_v1_router.include_router(identity_router)
 api_v1_router.include_router(sources_router)
 api_v1_router.include_router(evidence_router)
@@ -34,3 +36,4 @@ api_v1_router.include_router(learning_router)
 api_v1_router.include_router(assessments_router)
 api_v1_router.include_router(applications_router)
 api_v1_router.include_router(outcomes_router)
+

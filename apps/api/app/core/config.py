@@ -54,6 +54,18 @@ class Settings(BaseSettings):
     LINKEDIN_CLIENT_ID: Optional[str] = None
     LINKEDIN_CLIENT_SECRET: Optional[str] = None
 
+    # DPDP Act 2023 & DPDP Rules 2025 Compliance Configuration
+    DPDP_ENABLED: bool = True
+    DPDP_ORGANIZATION_NAME: str = "JobPilot Technologies Private Limited"
+    DPDP_DPO_NAME: str = "Designated Data Protection Officer"
+    DPDP_DPO_EMAIL: str = "dpo@jobpilot.dev"
+    DPDP_GRIEVANCE_EMAIL: str = "grievance@jobpilot.dev"
+    DPDP_GRIEVANCE_SLA_DAYS: int = 90
+    DPDP_DATA_RETENTION_INACTIVE_DAYS: int = 365
+    DPDP_SDF_STATUS: bool = False  # Set to True if designated as Significant Data Fiduciary
+    DPDP_BOARD_NAME: str = "Data Protection Board of India"
+    DPDP_BOARD_PORTAL: str = "https://dpbi.gov.in"
+
     @property
     def cors_origins(self) -> List[str]:
         return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
@@ -64,3 +76,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+

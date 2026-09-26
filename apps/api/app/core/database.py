@@ -81,6 +81,21 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 async def init_db() -> None:
     """Initializes tables for development/testing."""
+    # Ensure all models are registered on Base.metadata
+    import app.domains.identity.models  # noqa
+    import app.domains.sources.models  # noqa
+    import app.domains.evidence.models  # noqa
+    import app.domains.skills.models  # noqa
+    import app.domains.career_goals.models  # noqa
+    import app.domains.jobs.models  # noqa
+    import app.domains.matching.models  # noqa
+    import app.domains.learning.models  # noqa
+    import app.domains.assessments.models  # noqa
+    import app.domains.applications.models  # noqa
+    import app.domains.outcomes.models  # noqa
+    import app.domains.privacy.models  # noqa
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     logger.info("Database schema initialized successfully")
+
