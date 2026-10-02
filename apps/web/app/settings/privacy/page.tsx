@@ -263,8 +263,8 @@ export default function PrivacySettingsPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">Privacy Center</Badge>
-            <Badge variant="success" dot>DPDP Compliant</Badge>
+            <Badge variant="neutral">Settings</Badge>
+            <span style={{ fontSize: "12.5px", color: "var(--text-muted)" }}>Data Protection & Rights</span>
           </div>
           <h1 style={{ fontSize: "26px", fontWeight: 800, letterSpacing: "-0.025em" }}>
             Privacy & Data Rights
