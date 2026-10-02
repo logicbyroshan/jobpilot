@@ -120,13 +120,13 @@ export default function OverviewPage() {
   };
 
   const stages = [
-    { num: "01", name: "Know Me", href: "/know", tag: "8 Verified", icon: UserCheck, active: false },
-    { num: "02", name: "Opportunities", href: "/opportunities", tag: "94% Top Fit", icon: Target, active: false },
-    { num: "03", name: "Gaps", href: "/gaps", tag: "1 Blocker", icon: Sparkles, active: false },
-    { num: "04", name: "Improve", href: "/improve", tag: "Today's Focus", icon: BookOpen, active: false },
-    { num: "05", name: "Prove", href: "/prove", tag: "Ready", icon: Award, active: true },
+    { num: "01", name: "Profile", href: "/know", tag: "8 Skills", icon: UserCheck, active: false },
+    { num: "02", name: "Opportunities", href: "/opportunities", tag: "94% Fit", icon: Target, active: false },
+    { num: "03", name: "Skill Gaps", href: "/gaps", tag: "1 Blocker", icon: Sparkles, active: false },
+    { num: "04", name: "Learning Plan", href: "/improve", tag: "Tasks", icon: BookOpen, active: false },
+    { num: "05", name: "Assessments", href: "/prove", tag: "Ready", icon: Award, active: true },
     { num: "06", name: "Applications", href: "/applications", tag: "2 Active", icon: Send, active: false },
-    { num: "07", name: "Outcomes", href: "/outcomes", tag: "1 Offer", icon: TrendingUp, active: false },
+    { num: "07", name: "Analytics", href: "/outcomes", tag: "1 Offer", icon: TrendingUp, active: false },
   ];
 
   return (
@@ -144,8 +144,8 @@ export default function OverviewPage() {
       >
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">Autonomous Career OS</Badge>
-            <Badge variant="success" dot>Loop Live</Badge>
+            <Badge variant="brand">JobPilot</Badge>
+            <Badge variant="success" dot>Active</Badge>
           </div>
           <h1 style={{ fontSize: "24px", fontWeight: 800, letterSpacing: "-0.025em" }}>
             Good afternoon, {profile?.full_name || "Alex Chen"}
@@ -156,15 +156,15 @@ export default function OverviewPage() {
               alignItems: "center",
               gap: "12px",
               marginTop: "6px",
-              fontSize: "14px",
+              fontSize: "13.5px",
               color: "var(--text-sub)",
               flexWrap: "wrap",
             }}
           >
-            <span>Targeting: <strong style={{ color: "#ffffff" }}>{goal?.target_role || "Staff Distributed Systems Architect"}</strong></span>
-            <span style={{ color: "var(--border-subtle)" }}>|</span>
-            <span>Career Readiness: <strong style={{ color: "var(--accent-emerald)", fontWeight: 700 }}>82%</strong></span>
-            <span style={{ color: "var(--border-subtle)" }}>|</span>
+            <span>Target: <strong style={{ color: "#ffffff" }}>{goal?.target_role || "Staff Distributed Systems Architect"}</strong></span>
+            <span style={{ color: "var(--border-subtle)" }}>•</span>
+            <span>Readiness: <strong style={{ color: "var(--accent-emerald)", fontWeight: 700 }}>82%</strong></span>
+            <span style={{ color: "var(--border-subtle)" }}>•</span>
             <span>Profile Confidence: <strong style={{ color: "var(--accent-cyan)", fontWeight: 700 }}>94.2%</strong></span>
           </div>
         </div>
@@ -176,7 +176,7 @@ export default function OverviewPage() {
             onClick={() => setIsGoalModalOpen(true)}
             icon={<Edit3 size={13} color="var(--accent-cyan)" />}
           >
-            Edit Target Direction
+            Edit Goal
           </Button>
 
           <Button
@@ -191,7 +191,7 @@ export default function OverviewPage() {
               />
             }
           >
-            {recalculating ? "Recalculating..." : "Recalculate Fit"}
+            {recalculating ? "Refreshing..." : "Refresh Matches"}
           </Button>
         </div>
       </div>
@@ -226,25 +226,25 @@ export default function OverviewPage() {
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
                 <span style={{ fontSize: "11.5px", fontWeight: 700, textTransform: "uppercase", color: "#d8b4fe", letterSpacing: "0.06em" }}>
-                  Recommended Next Action
+                  Recommended Action
                 </span>
-                <Badge variant="purple" size="sm">⏱ 20 Mins Diagnostic</Badge>
+                <Badge variant="purple" size="sm">20 min test</Badge>
               </div>
 
               <h2 style={{ fontSize: "17.5px", fontWeight: 700, marginBottom: "8px" }}>
-                Prove Skill: Distributed Consensus & Raft Quorums
+                Verify Skill: Distributed Consensus & Raft
               </h2>
 
               {/* High-Impact Stat Chips */}
               <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
                 <Badge variant="success" size="sm">
-                  🏆 +1.8 Level Boost (9.8/10 Target)
+                  +1.8 Level Boost
                 </Badge>
                 <Badge variant="cyan" size="sm">
-                  🎯 Unlocks 12 Tier-1 Positions
+                  Unlocks 12 Tier-1 Roles
                 </Badge>
                 <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>
-                  Verified code proof for distributed systems seniority.
+                  Verified code proof for distributed systems engineering.
                 </span>
               </div>
             </div>
@@ -262,10 +262,10 @@ export default function OverviewPage() {
       <div className="ui-card" style={{ padding: "16px 20px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
           <div style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase", color: "var(--text-dim)", letterSpacing: "0.06em" }}>
-            Career Operating Pipeline
+            Career Journey
           </div>
           <span style={{ fontSize: "12.5px", color: "var(--text-sub)" }}>
-            Current Stage: <strong style={{ color: "#ffffff" }}>Stage 5 (PROVE)</strong>
+            Current Focus: <strong style={{ color: "#ffffff" }}>Assessments</strong>
           </span>
         </div>
 
@@ -309,12 +309,12 @@ export default function OverviewPage() {
 
       {/* 4. THREE-COLUMN OVERVIEW GRID */}
       <div className="grid-3">
-        {/* Top Recommended Matches */}
+        {/* Top Job Matches */}
         <div className="ui-card ui-card-hover">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Target size={17} color="var(--accent-cyan)" />
-              <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Top Recommended Matches</h3>
+              <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Top Job Matches</h3>
             </div>
             <Link href="/opportunities" prefetch={true} style={{ fontSize: "12.5px", color: "var(--text-sub)", textDecoration: "none", fontWeight: 600 }}>
               View All ({matches.length}) →
@@ -364,15 +364,15 @@ export default function OverviewPage() {
           </div>
         </div>
 
-        {/* Active Skill Deficits */}
+        {/* Skill Gaps */}
         <div className="ui-card ui-card-hover">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Sparkles size={17} color="var(--accent-amber)" />
-              <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Active Skill Deficits</h3>
+              <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Skill Gaps</h3>
             </div>
-            <Link href="/improve" prefetch={true} style={{ fontSize: "12.5px", color: "var(--text-sub)", textDecoration: "none", fontWeight: 600 }}>
-              Close Gaps ({gaps.length}) →
+            <Link href="/gaps" prefetch={true} style={{ fontSize: "12.5px", color: "var(--text-sub)", textDecoration: "none", fontWeight: 600 }}>
+              View Gaps ({gaps.length}) →
             </Link>
           </div>
 
@@ -411,7 +411,7 @@ export default function OverviewPage() {
           </div>
         </div>
 
-        {/* Strategic Career AI Insight */}
+        {/* Career AI Insight */}
         <div
           className="ui-card"
           style={{
@@ -425,18 +425,17 @@ export default function OverviewPage() {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
               <Zap size={17} color="var(--accent-cyan)" />
-              <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Strategic AI Insight</h3>
+              <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Career Insight</h3>
             </div>
 
             <p style={{ fontSize: "13.5px", color: "var(--text-sub)", lineHeight: 1.55, marginBottom: "14px" }}>
-              &ldquo;Your profile is strong enough for senior backend roles. Your primary current bottleneck is verifying
-              multi-tenant Kubernetes operators and Triton serving infrastructure.&rdquo;
+              &ldquo;Your profile is strong for senior backend positions. Your fastest match booster is completing verification for Kubernetes operators and Triton model serving.&rdquo;
             </p>
           </div>
 
           <Link href="/improve" prefetch={true} style={{ textDecoration: "none" }}>
             <Button variant="secondary" size="md" style={{ width: "100%" }}>
-              Review Learning Blueprint
+              View Learning Plan
             </Button>
           </Link>
         </div>
@@ -445,8 +444,8 @@ export default function OverviewPage() {
       {/* 5. RECENT ACTIVITY TIMELINE */}
       <div className="ui-card">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-          <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Recent Career Operating Activities</h3>
-          <span style={{ fontSize: "12.5px", color: "var(--text-muted)" }}>Synchronized across 4 sources</span>
+          <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Recent Activity</h3>
+          <span style={{ fontSize: "12.5px", color: "var(--text-muted)" }}>Synced with connected sources</span>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>

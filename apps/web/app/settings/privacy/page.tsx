@@ -249,12 +249,12 @@ export default function PrivacySettingsPage() {
     );
   }
 
-  const tabs = [
-    { id: "consent", label: "Consent Choices", icon: Lock, badge: "Sec 6 & 7" },
-    { id: "access", label: "Subject Access (SAR)", icon: Download, badge: "Sec 11" },
-    { id: "grievances", label: "Grievance Redressal", icon: HelpCircle, badge: "Sec 13" },
-    { id: "nomination", label: "Nomination Proxy", icon: UserCheck, badge: "Sec 14" },
-    { id: "erasure", label: "Right to Erasure", icon: Trash2, badge: "Sec 12", danger: true },
+  const tabs: { id: string; label: string; icon: any; danger?: boolean; badge?: string }[] = [
+    { id: "consent", label: "Consent Choices", icon: Lock },
+    { id: "access", label: "Data Export & SAR", icon: Download },
+    { id: "grievances", label: "Grievances (DPO)", icon: HelpCircle },
+    { id: "nomination", label: "Nominee", icon: UserCheck },
+    { id: "erasure", label: "Delete Account", icon: Trash2, danger: true },
   ];
 
   return (
@@ -263,21 +263,21 @@ export default function PrivacySettingsPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">DPDP Act 2023 & DPDP Rules 2025</Badge>
-            <Badge variant="success" dot>Statutory Compliance Active</Badge>
+            <Badge variant="brand">Privacy Center</Badge>
+            <Badge variant="success" dot>DPDP Compliant</Badge>
           </div>
           <h1 style={{ fontSize: "26px", fontWeight: 800, letterSpacing: "-0.025em" }}>
-            Privacy & Data Principal Rights Center
+            Privacy & Data Rights
           </h1>
           <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
-            Manage explicit consents, exercise statutory rights (Access, Portability, Grievance, Nomination, Erasure), and monitor data fiduciary processing.
+            Manage your consent preferences, export your personal data, and exercise your rights under the DPDP Act 2023.
           </p>
         </div>
 
         <div style={{ display: "flex", gap: "10px" }}>
           <Link href="/privacy" prefetch={true} style={{ textDecoration: "none" }}>
             <Button variant="secondary" size="sm" icon={<FileText size={14} color="var(--accent-cyan)" />}>
-              View DPDP Legal Notice
+              View Legal Notice
             </Button>
           </Link>
         </div>

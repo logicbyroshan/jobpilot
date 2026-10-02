@@ -83,10 +83,10 @@ export default function AutomationSettingsPage() {
             <ChevronLeft size={13} /> Back to Applications
           </Link>
           <h1 style={{ fontSize: "22px", fontWeight: 700 }}>
-            Application Automation & Policy Guardrails
+            Automation Settings
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: "13px", marginTop: "2px" }}>
-            JobPilot will strictly submit or prepare applications only when your explicit constraints are satisfied.
+            Set daily application limits, auto-apply match thresholds, and safety guardrails.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ export default function AutomationSettingsPage() {
           disabled={saving}
           icon={<Save size={13} />}
         >
-          {saving ? "Saving..." : "Save Policy"}
+          {saving ? "Saving..." : "Save Settings"}
         </Button>
       </div>
 

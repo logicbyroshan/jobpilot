@@ -78,20 +78,20 @@ export default function ProvePage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">Stage 4 • Integrity & Proving</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Deterministic Competency Verification</span>
+            <Badge variant="brand">Skill Assessments</Badge>
+            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Technical Verification</span>
           </div>
           <h1 style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.03em" }}>
-            Prove Your Skills — Objective Verification
+            Assessments & Skill Proof
           </h1>
           <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
-            Claims are not enough. Complete proctored deterministic assessments to instantly boost your living portfolio and unlock Tier-1 opportunities.
+            Complete timed technical assessments to verify your skills and increase your job match ranking.
           </p>
         </div>
 
         <Link href="/opportunities" prefetch={true} style={{ textDecoration: "none" }}>
           <Button variant="secondary" size="md" icon={<Target size={15} />}>
-            View Opportunity Radar
+            View Opportunities
           </Button>
         </Link>
       </div>
@@ -114,14 +114,14 @@ export default function ProvePage() {
             <ShieldCheck size={26} />
           </div>
           <div>
-            <h2 style={{ fontSize: "18px", fontWeight: 800 }}>Fullscreen Assessment Environment & Anti-Cheat Layer</h2>
+            <h2 style={{ fontSize: "18px", fontWeight: 800 }}>Proctored Assessment Environment</h2>
             <p style={{ fontSize: "13px", color: "var(--text-sub)", marginTop: "2px" }}>
-              Assessment sessions run in a dedicated distraction-free workspace with tab focus monitoring and camera/mic verification.
+              Sessions run in a distraction-free workspace with tab focus monitoring and instant score verification.
             </p>
           </div>
         </div>
         <Badge variant="purple" icon={<Lock size={13} />}>
-          Verified Proof Protocol
+          Verified Proof
         </Badge>
       </Card>
 

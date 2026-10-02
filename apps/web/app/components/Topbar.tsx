@@ -46,17 +46,18 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps = {}) {
   }, []);
 
   const getBreadcrumbs = () => {
-    if (!pathname || pathname === "/") return [{ label: "Career OS", href: "/" }, { label: "Overview", href: "/" }];
-    if (pathname.startsWith("/know")) return [{ label: "Career OS", href: "/" }, { label: "Know Me", href: "/know" }];
-    if (pathname.startsWith("/opportunities") || pathname.startsWith("/match")) return [{ label: "Career OS", href: "/" }, { label: "Opportunities", href: "/opportunities" }];
-    if (pathname.startsWith("/gaps") || pathname.startsWith("/gap")) return [{ label: "Career OS", href: "/" }, { label: "Gaps", href: "/gaps" }];
-    if (pathname.startsWith("/improve")) return [{ label: "Career OS", href: "/" }, { label: "Improve", href: "/improve" }];
-    if (pathname.startsWith("/prove")) return [{ label: "Career OS", href: "/" }, { label: "Prove", href: "/prove" }];
-    if (pathname.startsWith("/applications") || pathname.startsWith("/apply")) return [{ label: "Career OS", href: "/" }, { label: "Applications", href: "/applications" }];
-    if (pathname.startsWith("/outcomes") || pathname.startsWith("/outcome")) return [{ label: "Career OS", href: "/" }, { label: "Outcomes", href: "/outcomes" }];
-    if (pathname.startsWith("/sources")) return [{ label: "Platform", href: "/" }, { label: "Sources", href: "/sources" }];
-    if (pathname.startsWith("/settings")) return [{ label: "Settings", href: "/settings/automation" }, { label: "Automation Policy", href: "/settings/automation" }];
-    return [{ label: "Career OS", href: "/" }];
+    if (!pathname || pathname === "/") return [{ label: "JobPilot", href: "/" }, { label: "Overview", href: "/" }];
+    if (pathname.startsWith("/know")) return [{ label: "JobPilot", href: "/" }, { label: "Skills & Profile", href: "/know" }];
+    if (pathname.startsWith("/opportunities") || pathname.startsWith("/match")) return [{ label: "JobPilot", href: "/" }, { label: "Opportunities", href: "/opportunities" }];
+    if (pathname.startsWith("/gaps") || pathname.startsWith("/gap")) return [{ label: "JobPilot", href: "/" }, { label: "Skill Gaps", href: "/gaps" }];
+    if (pathname.startsWith("/improve")) return [{ label: "JobPilot", href: "/" }, { label: "Learning Plan", href: "/improve" }];
+    if (pathname.startsWith("/prove")) return [{ label: "JobPilot", href: "/" }, { label: "Assessments", href: "/prove" }];
+    if (pathname.startsWith("/applications") || pathname.startsWith("/apply")) return [{ label: "JobPilot", href: "/" }, { label: "Applications", href: "/applications" }];
+    if (pathname.startsWith("/outcomes") || pathname.startsWith("/outcome")) return [{ label: "JobPilot", href: "/" }, { label: "Analytics", href: "/outcomes" }];
+    if (pathname.startsWith("/sources")) return [{ label: "JobPilot", href: "/" }, { label: "Data Sources", href: "/sources" }];
+    if (pathname.startsWith("/settings/privacy") || pathname.startsWith("/privacy")) return [{ label: "Settings", href: "/settings/privacy" }, { label: "Privacy Center", href: "/settings/privacy" }];
+    if (pathname.startsWith("/settings")) return [{ label: "Settings", href: "/settings/automation" }, { label: "Automation", href: "/settings/automation" }];
+    return [{ label: "JobPilot", href: "/" }];
   };
 
   const breadcrumbs = getBreadcrumbs();
@@ -89,7 +90,7 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps = {}) {
         onClick={onOpenCommandPalette}
       >
         <SearchBar
-          placeholder="Search skills, opportunities, resources, evidence..."
+          placeholder="Search opportunities, skills, companies... (⌘K)"
           shortcut="⌘K"
           readOnly
           style={{ cursor: "pointer" }}

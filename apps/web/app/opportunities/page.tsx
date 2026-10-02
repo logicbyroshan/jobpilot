@@ -103,21 +103,21 @@ export default function OpportunitiesPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "14px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">Stage 2</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Calibrated Opportunity Radar</span>
+            <Badge variant="brand">Job Opportunities</Badge>
+            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Ranked by Skill Match</span>
           </div>
           <h1 style={{ fontSize: "24px", fontWeight: 800, letterSpacing: "-0.025em" }}>
-            Opportunities For You
+            Matched Opportunities
           </h1>
           <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
-            Ranked by how accurately roles align with your verified skills, career direction, and evidence graph.
+            Roles ranked by how closely they align with your verified skills, experience, and compensation goals.
           </p>
         </div>
 
         <div style={{ display: "flex", gap: "8px" }}>
           <Link href="/gaps" prefetch={true} style={{ textDecoration: "none" }}>
             <Button variant="secondary" size="sm" icon={<Sparkles size={14} color="var(--accent-amber)" />}>
-              View Blocking Gaps
+              View Skill Gaps
             </Button>
           </Link>
         </div>
@@ -146,14 +146,14 @@ export default function OpportunitiesPage() {
             size="sm"
             onClick={() => setSelectedFit("STRONG")}
           >
-            Strong Fit (&ge;90%)
+            Top Fit (≥90%)
           </Button>
           <Button
             variant={selectedFit === "GOOD" ? "primary" : "secondary"}
             size="sm"
             onClick={() => setSelectedFit("GOOD")}
           >
-            Good Fit (80-89%)
+            Good Fit (80–89%)
           </Button>
         </div>
       </div>

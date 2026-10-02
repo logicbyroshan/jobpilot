@@ -64,20 +64,20 @@ export default function OutcomesPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">Stage 6 • Intelligence & Closed Loop</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Career Analytics & Failure Diagnostics</span>
+            <Badge variant="brand">Analytics</Badge>
+            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Application Funnel</span>
           </div>
           <h1 style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.03em" }}>
-            Outcomes — Career Funnel Intelligence
+            Application Analytics & Funnel
           </h1>
           <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
-            Every interview outcome, offer, and rejection is analyzed to diagnose your single biggest bottleneck and feed actionable gaps back into your loop.
+            Track application conversion rates across interview stages and view recommendations.
           </p>
         </div>
 
         <Link href="/improve" prefetch={true} style={{ textDecoration: "none" }}>
           <Button variant="primary" size="md" icon={<BookOpen size={15} />}>
-            Address Diagnostic Bottleneck →
+            View Learning Plan →
           </Button>
         </Link>
       </div>
@@ -101,22 +101,22 @@ export default function OutcomesPage() {
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase", color: "var(--brand)", letterSpacing: "0.06em" }}>
-                  Primary Career Bottleneck Diagnosed
+                  Key Improvement Area
                 </span>
-                <Badge variant="brand">High Impact Loop (9.2 / 10)</Badge>
+                <Badge variant="brand">High Impact</Badge>
               </div>
               <h2 style={{ fontSize: "19px", fontWeight: 800, marginTop: "4px" }}>
-                Technical Round Drop-off in GPU Cluster Scheduling & Triton Serving
+                Technical Round: GPU Cluster Scheduling & Triton Serving
               </h2>
               <p style={{ fontSize: "14px", color: "var(--text-sub)", marginTop: "6px", lineHeight: 1.6 }}>
-                You have a 100% pass rate at recruiter screen, but 50% of recent rejections cite a lack of demonstrable hands-on proof with GPU streaming concurrency and Triton dynamic batching.
+                You have a 100% pass rate at recruiter screen. Building verified projects with GPU streaming concurrency and Triton dynamic batching will significantly boost technical round pass rates.
               </p>
             </div>
           </div>
 
           <Link href="/improve" prefetch={true} style={{ textDecoration: "none" }}>
             <Button variant="primary" size="md" icon={<ArrowRight size={15} />}>
-              Start Recommended Focus Mission
+              Start Recommended Task
             </Button>
           </Link>
         </div>

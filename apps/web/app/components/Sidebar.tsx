@@ -37,7 +37,7 @@ const lifecycleItems: NavItem[] = [
     icon: Compass,
   },
   {
-    name: "Know Me",
+    name: "Skills & Profile",
     href: "/know",
     icon: UserCheck,
     tag: "Verified",
@@ -47,21 +47,21 @@ const lifecycleItems: NavItem[] = [
     name: "Opportunities",
     href: "/opportunities",
     icon: Target,
-    tag: "94% Top Fit",
+    tag: "94% Fit",
     badgeVariant: "cyan",
   },
   {
-    name: "Improve",
+    name: "Learning Plan",
     href: "/improve",
     icon: BookOpen,
-    tag: "Today's Task",
+    tag: "Tasks",
     badgeVariant: "neutral",
   },
   {
-    name: "Prove",
+    name: "Assessments",
     href: "/prove",
     icon: Award,
-    tag: "+1.8 Boost",
+    tag: "Ready",
     badgeVariant: "purple",
   },
   {
@@ -72,7 +72,7 @@ const lifecycleItems: NavItem[] = [
     badgeVariant: "neutral",
   },
   {
-    name: "Outcomes",
+    name: "Analytics",
     href: "/outcomes",
     icon: TrendingUp,
     tag: "1 Offer",
@@ -82,22 +82,22 @@ const lifecycleItems: NavItem[] = [
 
 const secondaryItems: NavItem[] = [
   {
-    name: "Sources",
+    name: "Data Sources",
     href: "/sources",
     icon: FolderGit2,
-    tag: "4 Connected",
+    tag: "4 Active",
     badgeVariant: "neutral",
   },
   {
-    name: "Automation Settings",
+    name: "Automation",
     href: "/settings/automation",
     icon: Sliders,
   },
   {
-    name: "Privacy & DPDP Rights",
+    name: "Privacy Center",
     href: "/settings/privacy",
     icon: Shield,
-    tag: "DPDP 2025",
+    tag: "DPDP",
     badgeVariant: "brand",
   },
 ];
@@ -198,7 +198,7 @@ export function Sidebar() {
           <span>Career Journey</span>
           <span style={{ fontSize: "9.5px", color: "var(--accent-emerald)", display: "flex", alignItems: "center", gap: "4px" }}>
             <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "var(--accent-emerald)" }} />
-            Active Loop
+            Active
           </span>
         </div>
 

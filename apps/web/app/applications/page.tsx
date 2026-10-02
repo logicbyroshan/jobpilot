@@ -97,21 +97,21 @@ export default function ApplicationsControlCenterPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">Stage 5 • Execution & Resumes</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Governed Pipeline Execution</span>
+            <Badge variant="brand">Applications</Badge>
+            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Submissions & Resumes</span>
           </div>
           <h1 style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.03em" }}>
-            Applications Control Center & Resume Studio
+            Applications & Resumes
           </h1>
           <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
-            Evidence-tailored resume generator, governed autonomous execution queue, and conversion tracking.
+            Track active job applications, tailored resume versions, and automated submissions.
           </p>
         </div>
 
         <div style={{ display: "flex", gap: "10px" }}>
           <Link href="/outcomes" prefetch={true} style={{ textDecoration: "none" }}>
             <Button variant="secondary" size="md">
-              View Conversion Funnel →
+              View Analytics →
             </Button>
           </Link>
         </div>
@@ -132,13 +132,13 @@ export default function ApplicationsControlCenterPage() {
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <h2 style={{ fontSize: "18px", fontWeight: 800 }}>Governed Auto-Apply Policy: {policy?.mode || "ASSISTED"} Mode</h2>
+                <h2 style={{ fontSize: "18px", fontWeight: 800 }}>Auto-Apply Policy: {policy?.mode || "ASSISTED"} Mode</h2>
                 <Badge variant={policy?.mode === "AUTONOMOUS" ? "brand" : "cyan"}>
-                  {policy?.mode === "AUTONOMOUS" ? "Autonomous Submissions Active" : "User Review Required"}
+                  {policy?.mode === "AUTONOMOUS" ? "Auto Submissions Active" : "Review Required"}
                 </Badge>
               </div>
               <p style={{ fontSize: "13px", color: "var(--text-sub)", marginTop: "3px" }}>
-                Daily limit: {policy?.daily_application_limit || 5}/day • Minimum match threshold: {policy?.min_match_score || 85}% • Truthfulness guarantee: 100% verified claims only.
+                Daily limit: {policy?.daily_application_limit || 5}/day • Min fit: {policy?.min_match_score || 85}% • 100% verified claims.
               </p>
             </div>
           </div>

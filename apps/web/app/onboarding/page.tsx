@@ -109,10 +109,10 @@ export default function OnboardingPage() {
         {step === 1 && (
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
-              <Badge variant="brand" size="sm" style={{ marginBottom: "6px" }}>Step 1: Career Direction</Badge>
-              <h1 style={{ fontSize: "20px", fontWeight: 700 }}>Tell us where you want to go.</h1>
+              <Badge variant="brand" size="sm" style={{ marginBottom: "6px" }}>Step 1: Target Role</Badge>
+              <h1 style={{ fontSize: "20px", fontWeight: 700 }}>Tell us what role you're looking for.</h1>
               <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "2px" }}>
-                JobPilot aligns its matching radar, gap diagnostics, and learning pathways around your target role.
+                JobPilot personalizes job matches, skill gaps, and learning roadmaps around your target role.
               </p>
             </div>
 
@@ -163,10 +163,10 @@ export default function OnboardingPage() {
         {step === 2 && (
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
-              <Badge variant="cyan" size="sm" style={{ marginBottom: "6px" }}>Step 2: Source Ingestion</Badge>
-              <h1 style={{ fontSize: "20px", fontWeight: 700 }}>Let&apos;s discover what we already know about you.</h1>
+              <Badge variant="cyan" size="sm" style={{ marginBottom: "6px" }}>Step 2: Connect Data</Badge>
+              <h1 style={{ fontSize: "20px", fontWeight: 700 }}>Connect your work profiles.</h1>
               <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "2px" }}>
-                You don&apos;t need to manually type your career. JobPilot extracts skills and evidence directly from your work.
+                No manual resume typing. JobPilot extracts your verified skills directly from your code and documents.
               </p>
             </div>
 
@@ -210,7 +210,7 @@ export default function OnboardingPage() {
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <FileText size={20} color="var(--accent-primary)" />
                   <div>
-                    <div style={{ fontSize: "13.5px", fontWeight: 600 }}>Verified Resume Artifact</div>
+                    <div style={{ fontSize: "13.5px", fontWeight: 600 }}>Resume Document</div>
                     <div style={{ fontSize: "11.5px", color: "var(--text-dim)" }}>alex_chen_staff_resume.pdf (Imported)</div>
                   </div>
                 </div>
@@ -254,10 +254,10 @@ export default function OnboardingPage() {
         {step === 3 && (
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div>
-              <Badge variant="purple" size="sm" style={{ marginBottom: "6px" }}>Step 3: Discovered Evidence</Badge>
-              <h1 style={{ fontSize: "20px", fontWeight: 700 }}>Review what JobPilot discovered.</h1>
+              <Badge variant="purple" size="sm" style={{ marginBottom: "6px" }}>Step 3: Discovered Skills</Badge>
+              <h1 style={{ fontSize: "20px", fontWeight: 700 }}>Review your verified skills.</h1>
               <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "2px" }}>
-                Every single skill is backed by immutable provenance from your connected repositories and artifacts.
+                Every skill is backed by real code commits and repository artifacts.
               </p>
             </div>
 
@@ -279,7 +279,7 @@ export default function OnboardingPage() {
                     </Badge>
                   </div>
                   <div style={{ fontSize: "11.5px", color: "var(--text-dim)" }}>
-                    <strong>Provenance:</strong> {sk.source}
+                    <strong>Source:</strong> {sk.source}
                   </div>
                 </div>
               ))}
@@ -287,14 +287,14 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* STEP 4: CONFIRM CAREER IDENTITY */}
+        {/* STEP 4: CONFIRM PROFILE */}
         {step === 4 && (
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div>
-              <Badge variant="brand" size="sm" style={{ marginBottom: "6px" }}>Step 4: Identity Confirmation</Badge>
-              <h1 style={{ fontSize: "20px", fontWeight: 700 }}>Confirm your career identity graph.</h1>
+              <Badge variant="brand" size="sm" style={{ marginBottom: "6px" }}>Step 4: Confirm Profile</Badge>
+              <h1 style={{ fontSize: "20px", fontWeight: 700 }}>Confirm your profile details.</h1>
               <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "2px" }}>
-                Review and fine-tune your core positioning before launching the autonomous matching radar.
+                Review your profile summary before viewing your top job matches.
               </p>
             </div>
 
@@ -312,8 +312,8 @@ export default function OnboardingPage() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", fontSize: "12px", color: "var(--text-dim)", marginTop: "10px" }}>
                 <div>📍 San Francisco, CA (Remote)</div>
                 <div>💼 8+ Years Experience</div>
-                <div>📊 Profile Confidence: <strong style={{ color: "var(--accent-emerald)" }}>94.2%</strong></div>
-                <div>🎯 Readiness Index: <strong style={{ color: "var(--accent-cyan)" }}>82%</strong></div>
+                <div>📊 Profile Completeness: <strong style={{ color: "var(--accent-emerald)" }}>94.2%</strong></div>
+                <div>🎯 Match Score: <strong style={{ color: "var(--accent-cyan)" }}>82%</strong></div>
               </div>
             </div>
           </div>
@@ -339,10 +339,10 @@ export default function OnboardingPage() {
             </div>
 
             <h1 style={{ fontSize: "22px", fontWeight: 800, marginBottom: "6px" }}>
-              Your Career Operating System is Ready.
+              Your Career Dashboard is Ready.
             </h1>
             <p style={{ fontSize: "13.5px", color: "var(--text-muted)", maxWidth: "480px", margin: "0 auto 20px" }}>
-              JobPilot has calibrated your identity graph, ranked 6 high-signal opportunities, and isolated 1 critical gap.
+              JobPilot has matched 6 top job opportunities and identified 1 key skill to learn.
             </p>
 
             <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
@@ -353,7 +353,7 @@ export default function OnboardingPage() {
                 icon={<ArrowRight size={16} />}
                 iconPosition="right"
               >
-                Enter Career Operating System
+                Go to Dashboard
               </Button>
             </div>
           </div>

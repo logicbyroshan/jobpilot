@@ -139,7 +139,7 @@ export default function PrivacyNoticePage() {
 
             <Link href="/settings/privacy" style={{ textDecoration: "none" }}>
               <Button variant="primary" size="sm" icon={<ChevronRight size={14} />}>
-                Privacy & Rights Center
+                Privacy Center
               </Button>
             </Link>
           </div>
@@ -158,16 +158,15 @@ export default function PrivacyNoticePage() {
           <div style={{ maxWidth: "800px" }}>
             <div style={{ marginBottom: "14px" }}>
               <Badge variant="emerald" size="md" icon={<CheckCircle size={14} />}>
-                Official Itemised Privacy Notice (Section 5, DPDP Act 2023)
+                DPDP Act 2023 Privacy Notice
               </Badge>
             </div>
             <h1 style={{ fontSize: "32px", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: "12px", color: "var(--text-main)" }}>
-              Digital Personal Data Protection & Governance
+              Privacy & Data Protection Notice
             </h1>
             <p style={{ color: "var(--text-sub)", fontSize: "14.5px", lineHeight: 1.6 }}>
-              JobPilot operates as a <strong style={{ color: "var(--text-main)" }}>Data Fiduciary</strong> committed to strict purpose limitation,
-              data minimisation, affirmative consent, and transparent Data Principal rights under the
-              Digital Personal Data Protection Act, 2023 (DPDP Act) and Digital Personal Data Protection Rules, 2025.
+              JobPilot processes personal data transparently in compliance with the Digital Personal Data Protection Act, 2023 (DPDP Act).
+              We ensure explicit consent, strict purpose limitation, and full data principal rights.
             </p>
           </div>
 
@@ -183,10 +182,10 @@ export default function PrivacyNoticePage() {
             }}
           >
             {[
-              { id: "notice", label: "1. Notice Baseline & DPO", icon: FileText },
-              { id: "purposes", label: "2. Itemised Purposes", icon: Lock },
-              { id: "rights", label: "3. Data Principal Rights", icon: Scale },
-              { id: "processors", label: "4. Third-Party Processors", icon: Globe },
+              { id: "notice", label: "Notice & DPO", icon: FileText },
+              { id: "purposes", label: "Data Purposes", icon: Lock },
+              { id: "rights", label: "Your Rights", icon: Scale },
+              { id: "processors", label: "Third-Party Processors", icon: Globe },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
