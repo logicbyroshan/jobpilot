@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Shield,
   Lock,
@@ -19,7 +19,12 @@ import {
   RefreshCw,
   Send,
   X,
-} from 'lucide-react';
+  AlertCircle,
+  Check,
+  Scale,
+  Database,
+  Building,
+} from "lucide-react";
 import {
   privacyApi,
   UserConsentOverview,
@@ -27,10 +32,16 @@ import {
   Grievance,
   Nomination,
   RetentionStatus,
-} from '@/lib/privacy-api';
+} from "@/lib/privacy-api";
+import { Button } from "@/app/components/ui/Button";
+import { Badge } from "@/app/components/ui/Badge";
+import { Card } from "@/app/components/ui/Card";
+import { Input } from "@/app/components/ui/Input";
+import { useToast } from "@/lib/toast-context";
 
 export default function PrivacySettingsPage() {
-  const [activeTab, setActiveTab] = useState<'consent' | 'access' | 'grievances' | 'nomination' | 'erasure'>('consent');
+  const { showToast } = useToast();
+  const [activeTab, setActiveTab] = useState<"consent" | "access" | "grievances" | "nomination" | "erasure">("consent");
   const [consentOverview, setConsentOverview] = useState<UserConsentOverview | null>(null);
   const [accessSummary, setDataAccessSummary] = useState<DataAccessSummary | null>(null);
   const [grievances, setGrievances] = useState<Grievance[]>([]);
@@ -41,30 +52,27 @@ export default function PrivacySettingsPage() {
   // Consent form state
   const [consentState, setConsentState] = useState<Record<string, boolean>>({});
   const [savingConsent, setSavingConsent] = useState(false);
-  const [consentSuccessMsg, setConsentSuccessMsg] = useState('');
 
   // Grievance form state
-  const [grvCategory, setGrvCategory] = useState('CONSENT_WITHDRAWAL');
-  const [grvSubject, setGrvSubject] = useState('');
-  const [grvDescription, setGrvDescription] = useState('');
+  const [grvCategory, setGrvCategory] = useState("CONSENT_WITHDRAWAL");
+  const [grvSubject, setGrvSubject] = useState("");
+  const [grvDescription, setGrvDescription] = useState("");
   const [submittingGrv, setSubmittingGrv] = useState(false);
-  const [grvSuccessMsg, setGrvSuccessMsg] = useState('');
 
   // Nomination form state
-  const [nomName, setNomName] = useState('');
-  const [nomEmail, setNomEmail] = useState('');
-  const [nomPhone, setNomPhone] = useState('');
-  const [nomRel, setNomRel] = useState('SPOUSE');
-  const [nomNotes, setNomNotes] = useState('');
+  const [nomName, setNomName] = useState("");
+  const [nomEmail, setNomEmail] = useState("");
+  const [nomPhone, setNomPhone] = useState("");
+  const [nomRel, setNomRel] = useState("SPOUSE");
+  const [nomNotes, setNomNotes] = useState("");
   const [savingNom, setSavingNom] = useState(false);
-  const [nomSuccessMsg, setNomSuccessMsg] = useState('');
 
   // Erasure modal state
   const [showErasureModal, setShowErasureModal] = useState(false);
-  const [confirmationPhrase, setConfirmationPhrase] = useState('');
-  const [erasureReason, setErasureReason] = useState('');
+  const [confirmationPhrase, setConfirmationPhrase] = useState("");
+  const [erasureReason, setErasureReason] = useState("");
   const [erasing, setErasing] = useState(false);
-  const [erasureError, setErasureError] = useState('');
+  const [erasureError, setErasureError] = useState("");
   const [erasureSuccess, setErasureSuccess] = useState<any | null>(null);
 
   // SAR Export state
@@ -89,7 +97,7 @@ export default function PrivacySettingsPage() {
         setConsentOverview(consents);
         const map: Record<string, boolean> = {};
         consents.active_consents.forEach((c) => {
-          map[c.purpose_id] = c.status === 'GRANTED';
+          map[c.purpose_id] = c.status === "GRANTED";
         });
         setConsentState(map);
       }
@@ -100,81 +108,86 @@ export default function PrivacySettingsPage() {
         setNomination(nom);
         setNomName(nom.nominee_full_name);
         setNomEmail(nom.nominee_email);
-        setNomPhone(nom.nominee_phone || '');
+        setNomPhone(nom.nominee_phone || "");
         setNomRel(nom.relationship);
-        setNomNotes(nom.notes || '');
+        setNomNotes(nom.notes || "");
       }
       if (ret) setRetentionStatus(ret);
+    } catch (err) {
+      console.error("Failed to load DPDP privacy data", err);
     } finally {
       setLoading(false);
     }
   }
 
-  const handleConsentToggle = (purposeId: string, currentVal: boolean, isEssential: boolean) => {
-    if (isEssential && currentVal) {
-      alert('This is an essential processing purpose required for core platform functionality. To withdraw, please use Account Erasure.');
-      return;
-    }
+  const handleToggleConsent = (purposeId: string) => {
     setConsentState((prev) => ({
       ...prev,
-      [purposeId]: !currentVal,
+      [purposeId]: !prev[purposeId],
     }));
   };
 
   const handleSaveConsent = async () => {
     setSavingConsent(true);
-    setConsentSuccessMsg('');
     try {
-      const batch = Object.entries(consentState).map(([purpose_id, granted]) => ({
+      const consentsList = Object.entries(consentState).map(([purpose_id, granted]) => ({
         purpose_id,
         granted,
       }));
-      await privacyApi.updateConsentBatch(batch);
-      setConsentSuccessMsg('Consent preferences updated and recorded in the DPDP Consent Ledger.');
-      await loadAllData();
-      setTimeout(() => setConsentSuccessMsg(''), 4000);
-    } catch (e: any) {
-      alert(e.message || 'Failed to update consent preferences');
+      await privacyApi.updateConsentBatch(consentsList);
+      const updated = await privacyApi.getConsentOverview();
+      setConsentOverview(updated);
+      showToast("DPDP consent preferences recorded with cryptographic timestamp!", "success");
+    } catch (err) {
+      console.error("Save consent failed", err);
+      showToast("Failed to update consents.", "error");
     } finally {
       setSavingConsent(false);
     }
   };
 
-  const handleDownloadExport = async () => {
+  const handleExportSAR = async () => {
     setExporting(true);
     try {
       const data = await privacyApi.exportFullUserData();
-      const jsonBlob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(jsonBlob);
-      const a = document.createElement('a');
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `JobPilot_DPDP_Export_${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `JobPilot_SAR_Export_${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (e: any) {
-      alert(e.message || 'Failed to download data export');
+      showToast("Portable SAR archive downloaded successfully (DPDP Sec 11)!", "success");
+    } catch (err) {
+      console.error("SAR Export failed", err);
+      showToast("Failed to generate SAR export.", "error");
     } finally {
       setExporting(false);
     }
   };
 
-  const handleCreateGrievance = async (e: React.FormEvent) => {
+  const handleSubmitGrievance = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!grvSubject || !grvDescription) return;
+    if (!grvSubject.trim() || !grvDescription.trim()) {
+      showToast("Please provide both subject and description.", "warning");
+      return;
+    }
     setSubmittingGrv(true);
-    setGrvSuccessMsg('');
     try {
-      const grv = await privacyApi.createGrievance(grvCategory, grvSubject, grvDescription);
-      setGrvSuccessMsg(`Grievance submitted successfully. Ticket ID: ${grv.ticket_id} (Statutory SLA: <=90 days).`);
-      setGrvSubject('');
-      setGrvDescription('');
-      const updated = await privacyApi.listGrievances();
-      setGrievances(updated);
-      setTimeout(() => setGrvSuccessMsg(''), 6000);
-    } catch (e: any) {
-      alert(e.message || 'Failed to submit grievance');
+      const newGrv = await privacyApi.createGrievance(
+        grvCategory,
+        grvSubject,
+        grvDescription
+      );
+      setGrievances((prev) => [newGrv, ...prev]);
+      setGrvSubject("");
+      setGrvDescription("");
+      showToast(`Grievance #${newGrv.ticket_id} filed. Statutory SLA: 90 Days.`, "success");
+    } catch (err) {
+      console.error("Grievance submission failed", err);
+      showToast("Failed to submit grievance ticket.", "error");
     } finally {
       setSubmittingGrv(false);
     }
@@ -182,589 +195,769 @@ export default function PrivacySettingsPage() {
 
   const handleSaveNomination = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nomName || !nomEmail) return;
+    if (!nomName.trim() || !nomEmail.trim()) {
+      showToast("Please provide nominee name and email.", "warning");
+      return;
+    }
     setSavingNom(true);
-    setNomSuccessMsg('');
     try {
-      const nom = await privacyApi.setNomination({
+      const saved = await privacyApi.setNomination({
         nominee_full_name: nomName,
         nominee_email: nomEmail,
-        nominee_phone: nomPhone,
+        nominee_phone: nomPhone || undefined,
         relationship: nomRel,
-        notes: nomNotes,
+        notes: nomNotes || undefined,
       });
-      setNomination(nom);
-      setNomSuccessMsg('Nominee designated successfully under Section 14 of DPDP Act 2023.');
-      setTimeout(() => setNomSuccessMsg(''), 4000);
-    } catch (e: any) {
-      alert(e.message || 'Failed to save nominee');
+      setNomination(saved);
+      showToast("Statutory nominee registered successfully (Section 14)!", "success");
+    } catch (err) {
+      console.error("Nomination failed", err);
+      showToast("Failed to register nominee.", "error");
     } finally {
       setSavingNom(false);
     }
   };
 
-  const handleRevokeNomination = async () => {
-    if (!confirm('Are you sure you want to revoke this nomination?')) return;
-    try {
-      await privacyApi.deleteNomination();
-      setNomination(null);
-      setNomName('');
-      setNomEmail('');
-      setNomPhone('');
-      setNomNotes('');
-      alert('Nomination revoked.');
-    } catch (e: any) {
-      alert(e.message || 'Failed to revoke nomination');
-    }
-  };
-
   const handleExecuteErasure = async () => {
-    setErasureError('');
+    if (confirmationPhrase.trim() !== "DELETE MY PERSONAL DATA PERMANENTLY") {
+      setErasureError("You must enter the exact required confirmation phrase.");
+      return;
+    }
     setErasing(true);
+    setErasureError("");
     try {
-      const res = await privacyApi.executeDataErasure(confirmationPhrase, erasureReason);
+      const res = await privacyApi.executeDataErasure(
+        confirmationPhrase,
+        erasureReason || "Data principal initiated self-service erasure"
+      );
       setErasureSuccess(res);
-      // Clear token after a few seconds and redirect
-      setTimeout(() => {
-        localStorage.removeItem('jobpilot_auth_token');
-        window.location.href = '/login?msg=account_erased';
-      }, 5000);
-    } catch (e: any) {
-      setErasureError(e.message || 'Erasure failed');
+      showToast("Personal data erased. Cryptographic audit record created.", "success");
+    } catch (err: any) {
+      console.error("Erasure failed", err);
+      setErasureError(err.message || "Erasure execution failed.");
     } finally {
       setErasing(false);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white pb-20">
-      {/* Header */}
-      <div className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="text-slate-400 hover:text-white text-sm">
-              Dashboard
-            </Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-sm text-slate-400">Settings</span>
-            <span className="text-slate-600">/</span>
-            <div className="flex items-center gap-1.5 text-white font-medium text-sm">
-              <Shield className="w-4 h-4 text-indigo-400" />
-              Privacy & Data Rights Center
-            </div>
-          </div>
+  if (loading) {
+    return (
+      <div style={{ padding: "60px 0", textAlign: "center", color: "var(--text-sub)" }}>
+        <RefreshCw size={24} style={{ animation: "spin 0.8s linear infinite", margin: "0 auto 12px", display: "block", color: "var(--accent-primary)" }} />
+        <p>Loading DPDP Compliance & Data Rights Center...</p>
+      </div>
+    );
+  }
 
-          <Link
-            href="/privacy"
-            className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-lg"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            View Official DPDP Notice
+  const tabs = [
+    { id: "consent", label: "Consent Choices", icon: Lock, badge: "Sec 6 & 7" },
+    { id: "access", label: "Subject Access (SAR)", icon: Download, badge: "Sec 11" },
+    { id: "grievances", label: "Grievance Redressal", icon: HelpCircle, badge: "Sec 13" },
+    { id: "nomination", label: "Nomination Proxy", icon: UserCheck, badge: "Sec 14" },
+    { id: "erasure", label: "Right to Erasure", icon: Trash2, badge: "Sec 12", danger: true },
+  ];
+
+  return (
+    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
+      {/* Top Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+            <Badge variant="brand">DPDP Act 2023 & DPDP Rules 2025</Badge>
+            <Badge variant="success" dot>Statutory Compliance Active</Badge>
+          </div>
+          <h1 style={{ fontSize: "26px", fontWeight: 800, letterSpacing: "-0.025em" }}>
+            Privacy & Data Principal Rights Center
+          </h1>
+          <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
+            Manage explicit consents, exercise statutory rights (Access, Portability, Grievance, Nomination, Erasure), and monitor data fiduciary processing.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Link href="/privacy" prefetch={true} style={{ textDecoration: "none" }}>
+            <Button variant="secondary" size="sm" icon={<FileText size={14} color="var(--accent-cyan)" />}>
+              View DPDP Legal Notice
+            </Button>
           </Link>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="mb-8">
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-indigo-950/80 border border-indigo-700/50 text-indigo-300 text-xs font-semibold mb-2">
-            <Shield className="w-3.5 h-3.5" />
-            DPDP Act 2023 & DPDP Rules 2025
-          </div>
-          <h1 className="text-3xl font-bold text-white">Privacy & Data Principal Rights Center</h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Manage your consent choices, exercise statutory rights (Access, Correction, Erasure, Grievance, Nomination), and view your data processing inventory.
-          </p>
-        </div>
-
-        {/* Tab Selector */}
-        <div className="flex items-center gap-2 border-b border-slate-800 pb-4 overflow-x-auto scrollbar-none mb-8">
-          {[
-            { id: 'consent', label: 'Consent Preferences', icon: Lock },
-            { id: 'access', label: 'Subject Access Request (SAR)', icon: Download },
-            { id: 'grievances', label: 'Grievance Redressal (90-Day SLA)', icon: HelpCircle },
-            { id: 'nomination', label: 'Nomination (Section 14)', icon: UserCheck },
-            { id: 'erasure', label: 'Permanent Erasure', icon: Trash2 },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isErasure = tab.id === 'erasure';
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? isErasure
-                      ? 'bg-rose-950 text-rose-300 border border-rose-700'
-                      : 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                    : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-slate-800'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Tab 1: Consent Preferences */}
-        {activeTab === 'consent' && (
-          <div className="space-y-6">
-            <div className="p-4 rounded-xl bg-indigo-950/40 border border-indigo-800/40 text-xs text-indigo-300 flex items-start gap-3">
-              <Info className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
-              <div>
-                <strong>Affirmative & Withdrawable Consent (Section 6):</strong> You maintain complete granular control over optional processing purposes. Withdrawing consent immediately halts associated downstream processing and disables automated execution policies.
-              </div>
-            </div>
-
-            {consentSuccessMsg && (
-              <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-700/60 text-emerald-300 text-sm flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
-                {consentSuccessMsg}
-              </div>
-            )}
-
-            <div className="space-y-4">
-              {consentOverview?.all_available_purposes?.map((purpose) => {
-                const isGranted = consentState[purpose.purpose_id] ?? (purpose.is_essential ? true : false);
-                return (
-                  <div
-                    key={purpose.purpose_id}
-                    className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                  >
-                    <div className="space-y-1.5 max-w-2xl">
-                      <div className="flex items-center gap-2">
-                        <h2 className="text-base font-semibold text-white">{purpose.purpose_name}</h2>
-                        {purpose.is_essential && (
-                          <span className="bg-indigo-950 text-indigo-300 border border-indigo-700/50 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">
-                            Essential
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-slate-300">{purpose.description}</p>
-                      <div className="flex flex-wrap gap-2 text-xs text-slate-500 pt-1">
-                        <span>Retention: {purpose.retention_period_days} Days</span>
-                        <span>•</span>
-                        <span>Categories: {purpose.data_categories_collected.join(', ')}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => handleConsentToggle(purpose.purpose_id, isGranted, purpose.is_essential)}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          isGranted ? 'bg-indigo-600' : 'bg-slate-700'
-                        }`}
-                      >
-                        <span
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                            isGranted ? 'translate-x-5' : 'translate-x-0'
-                          }`}
-                        />
-                      </button>
-                      <span className="text-xs font-medium w-16 text-right">
-                        {isGranted ? (
-                          <span className="text-emerald-400">Granted</span>
-                        ) : (
-                          <span className="text-slate-400">Withdrawn</span>
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="flex justify-end pt-4">
-              <button
-                onClick={handleSaveConsent}
-                disabled={savingConsent}
-                className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-50"
-              >
-                {savingConsent ? 'Saving to DPDP Ledger...' : 'Save Consent Preferences'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Tab 2: Subject Access Request (SAR) */}
-        {activeTab === 'access' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
-              <div>
-                <h2 className="text-lg font-bold text-white">Subject Access Request (Section 11)</h2>
-                <p className="text-sm text-slate-400 mt-1">
-                  Download a machine-readable JSON archive of all personal data, evidence graphs, applications, and consent logs.
-                </p>
-              </div>
-              <button
-                onClick={handleDownloadExport}
-                disabled={exporting}
-                className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-50 shrink-0"
-              >
-                <Download className="w-4 h-4" />
-                {exporting ? 'Generating SAR Archive...' : 'Download Full Data Export (JSON)'}
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400">Personal Data Inventory Summary</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {accessSummary?.categories?.map((cat) => (
-                  <div key={cat.category_name} className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold text-white">{cat.category_name}</h3>
-                      <span className="bg-slate-800 text-indigo-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full">
-                        {cat.record_count} items
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-300">{cat.description}</p>
-                    <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-500">
-                      Storage: {cat.storage_location}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Tab 3: Grievance Redressal */}
-        {activeTab === 'grievances' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Submission Form */}
-            <div className="lg:col-span-1 p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
-              <div className="flex items-center gap-2 text-indigo-400 font-semibold">
-                <HelpCircle className="w-5 h-5" />
-                <h2 className="text-base text-white">File Privacy Grievance</h2>
-              </div>
-              <p className="text-xs text-slate-400">
-                Under DPDP Rules 2025, privacy grievances are assigned a dedicated ticket ID and resolved by the DPO within a maximum 90-day statutory timeline.
-              </p>
-
-              {grvSuccessMsg && (
-                <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-700/60 text-emerald-300 text-xs">
-                  {grvSuccessMsg}
-                </div>
-              )}
-
-              <form onSubmit={handleCreateGrievance} className="space-y-3 text-xs">
-                <div>
-                  <label className="block text-slate-400 font-medium mb-1">Grievance Category</label>
-                  <select
-                    value={grvCategory}
-                    onChange={(e) => setGrvCategory(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-indigo-500"
-                  >
-                    <option value="CONSENT_WITHDRAWAL">Consent Withdrawal Inquiry</option>
-                    <option value="DATA_ACCESS">Data Access / SAR Inquiry</option>
-                    <option value="DATA_CORRECTION">Correction / Rectification</option>
-                    <option value="DATA_ERASURE">Data Erasure / Deletion Query</option>
-                    <option value="UNAUTHORIZED_PROCESSING">Unauthorized Processing Concern</option>
-                    <option value="SECURITY_CONCERN">Security & Vulnerability Report</option>
-                    <option value="OTHER">Other Privacy Inquiries</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 font-medium mb-1">Subject</label>
-                  <input
-                    type="text"
-                    required
-                    value={grvSubject}
-                    onChange={(e) => setGrvSubject(e.target.value)}
-                    placeholder="Brief description of the issue"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-indigo-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 font-medium mb-1">Detailed Description</label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={grvDescription}
-                    onChange={(e) => setGrvDescription(e.target.value)}
-                    placeholder="Explain what occurred and requested remedy..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-indigo-500 resize-none"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={submittingGrv}
-                  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium p-2.5 rounded-lg transition-all shadow-md shadow-indigo-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
+      {/* Statutory Navigation Tabs */}
+      <div
+        style={{
+          display: "flex",
+          gap: "8px",
+          borderBottom: "1px solid var(--border-subtle)",
+          paddingBottom: "8px",
+          overflowX: "auto",
+          width: "100%",
+        }}
+      >
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "8px 14px",
+                borderRadius: "6px",
+                fontSize: "13.5px",
+                fontWeight: isActive ? 700 : 500,
+                color: isActive
+                  ? tab.danger
+                    ? "#fda4af"
+                    : "#ffffff"
+                  : "var(--text-sub)",
+                background: isActive
+                  ? tab.danger
+                    ? "rgba(225, 29, 72, 0.2)"
+                    : "var(--bg-elevated)"
+                  : "transparent",
+                border: isActive
+                  ? tab.danger
+                    ? "1px solid rgba(225, 29, 72, 0.4)"
+                    : "1px solid var(--border-subtle)"
+                  : "1px solid transparent",
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <Icon
+                size={15}
+                color={
+                  isActive
+                    ? tab.danger
+                      ? "var(--accent-rose)"
+                      : "var(--accent-primary)"
+                    : "var(--text-muted)"
+                }
+              />
+              <span>{tab.label}</span>
+              {tab.badge && (
+                <span
+                  style={{
+                    fontSize: "10.5px",
+                    fontWeight: 700,
+                    padding: "1px 6px",
+                    borderRadius: "3px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    color: "var(--text-dim)",
+                  }}
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  {submittingGrv ? 'Submitting Grievance...' : 'Submit Grievance Ticket'}
-                </button>
-              </form>
-            </div>
-
-            {/* Grievance List */}
-            <div className="lg:col-span-2 space-y-4">
-              <h2 className="text-base font-semibold text-white">Tracked Grievance Tickets</h2>
-              {grievances.length === 0 ? (
-                <div className="p-8 rounded-2xl bg-slate-900/40 border border-slate-800 text-center text-slate-400 text-sm">
-                  No active or past privacy grievances recorded.
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {grievances.map((g) => (
-                    <div key={g.id} className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono font-bold text-indigo-300 bg-indigo-950/80 border border-indigo-700/50 px-2.5 py-0.5 rounded-md">
-                            {g.ticket_id}
-                          </span>
-                          <span className="text-xs text-slate-400 font-medium uppercase tracking-wider">
-                            {g.category}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                            g.status === 'RESOLVED' ? 'bg-emerald-950 text-emerald-400 border border-emerald-700/50' : 'bg-amber-950 text-amber-300 border border-amber-700/50'
-                          }`}>
-                            {g.status}
-                          </span>
-                          {g.status !== 'RESOLVED' && (
-                            <span className="text-xs text-cyan-300 font-mono flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5" />
-                              {g.days_remaining}d remaining (SLA)
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <h3 className="text-sm font-semibold text-white">{g.subject}</h3>
-                      <p className="text-xs text-slate-300">{g.description}</p>
-
-                      {g.resolution_notes && (
-                        <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 space-y-1">
-                          <span className="font-semibold text-indigo-400 block">DPO Resolution Response:</span>
-                          <p>{g.resolution_notes}</p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                  {tab.badge}
+                </span>
               )}
-            </div>
-          </div>
-        )}
-
-        {/* Tab 4: Representative Nomination */}
-        {activeTab === 'nomination' && (
-          <div className="max-w-2xl space-y-6">
-            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
-              <div className="flex items-center gap-2 text-indigo-400 font-semibold">
-                <UserCheck className="w-5 h-5" />
-                <h2 className="text-base text-white">Right to Nominate Representative (Section 14)</h2>
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Designate a trusted individual who shall exercise your Data Principal rights under the DPDP Act in the event of death or incapacity.
-              </p>
-
-              {nomSuccessMsg && (
-                <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-700/60 text-emerald-300 text-xs">
-                  {nomSuccessMsg}
-                </div>
-              )}
-
-              <form onSubmit={handleSaveNomination} className="space-y-3 text-xs">
-                <div>
-                  <label className="block text-slate-400 font-medium mb-1">Nominee Full Legal Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={nomName}
-                    onChange={(e) => setNomName(e.target.value)}
-                    placeholder="e.g. Jane Doe"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-indigo-500"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-slate-400 font-medium mb-1">Nominee Email Address</label>
-                    <input
-                      type="email"
-                      required
-                      value={nomEmail}
-                      onChange={(e) => setNomEmail(e.target.value)}
-                      placeholder="nominee@example.com"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-400 font-medium mb-1">Nominee Phone Number (Optional)</label>
-                    <input
-                      type="tel"
-                      value={nomPhone}
-                      onChange={(e) => setNomPhone(e.target.value)}
-                      placeholder="+91-9876543210"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 font-medium mb-1">Relationship</label>
-                  <select
-                    value={nomRel}
-                    onChange={(e) => setNomRel(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-indigo-500"
-                  >
-                    <option value="SPOUSE">Spouse</option>
-                    <option value="PARENT">Parent</option>
-                    <option value="CHILD">Child / Descendant</option>
-                    <option value="SIBLING">Sibling</option>
-                    <option value="LEGAL_GUARDIAN">Legal Guardian</option>
-                    <option value="AUTHORIZED_REPRESENTATIVE">Authorized Legal Representative</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 font-medium mb-1">Additional Notes</label>
-                  <textarea
-                    rows={2}
-                    value={nomNotes}
-                    onChange={(e) => setNomNotes(e.target.value)}
-                    placeholder="Specific instructions or legal power of attorney references..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-indigo-500 resize-none"
-                  />
-                </div>
-
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    type="submit"
-                    disabled={savingNom}
-                    className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-5 py-2.5 rounded-lg transition-all shadow-md shadow-indigo-600/20 disabled:opacity-50"
-                  >
-                    {savingNom ? 'Saving Nominee...' : nomination ? 'Update Nominee' : 'Save Nomination'}
-                  </button>
-
-                  {nomination && (
-                    <button
-                      type="button"
-                      onClick={handleRevokeNomination}
-                      className="bg-slate-800 hover:bg-rose-950 hover:text-rose-300 text-slate-300 font-medium px-4 py-2.5 rounded-lg transition-all border border-slate-700"
-                    >
-                      Revoke Nomination
-                    </button>
-                  )}
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Tab 5: Data Erasure (Danger Zone) */}
-        {activeTab === 'erasure' && (
-          <div className="max-w-2xl space-y-6">
-            <div className="p-6 rounded-2xl bg-rose-950/30 border border-rose-900/60 space-y-4">
-              <div className="flex items-center gap-2 text-rose-400 font-bold">
-                <AlertTriangle className="w-5 h-5" />
-                <h2 className="text-lg text-white">Permanent Account & Personal Data Erasure (Section 12)</h2>
-              </div>
-              <p className="text-xs text-rose-200 leading-relaxed">
-                Exercising your <strong>Right to Erasure</strong> permanently purges all personal credentials, professional identity graphs, work history, projects, connected OAuth source integrations, job applications, tailored resumes, and assessment submissions.
-              </p>
-              <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-900/40 text-xs text-slate-300 space-y-1">
-                <span className="font-semibold text-rose-400 block">Irreversible Action:</span>
-                This operation is immediate and permanent. Once completed, your credentials and evidence graph cannot be recovered.
-              </div>
-
-              <button
-                onClick={() => setShowErasureModal(true)}
-                className="bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-rose-600/20"
-              >
-                Initiate Permanent Data Erasure
-              </button>
-            </div>
-          </div>
-        )}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Erasure Confirmation Modal */}
+      {/* TAB 1: CONSENT PREFERENCES */}
+      {activeTab === "consent" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+          <Card style={{ padding: "18px 20px", background: "rgba(6, 182, 212, 0.06)", borderColor: "rgba(6, 182, 212, 0.25)" }}>
+            <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+              <Info size={20} color="var(--accent-cyan)" style={{ flexShrink: 0, marginTop: "2px" }} />
+              <div style={{ fontSize: "13px", color: "var(--text-sub)", lineHeight: 1.55 }}>
+                <strong style={{ color: "#ffffff" }}>Section 6 Notice & Consent:</strong> Every personal data processing purpose below is unbundled, specific, and independently revokable at any time without punitive service denial for non-essential features.
+              </div>
+            </div>
+          </Card>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            {consentOverview?.all_available_purposes.map((purpose) => {
+              const isGranted = consentState[purpose.purpose_id] !== false;
+              return (
+                <Card
+                  key={purpose.purpose_id}
+                  style={{
+                    padding: "20px 22px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: "16px",
+                    borderLeft: isGranted ? "3px solid var(--accent-emerald)" : "3px solid var(--border-subtle)",
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: "280px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                      <h3 style={{ fontSize: "15.5px", fontWeight: 700, color: "#f8fafc" }}>
+                        {purpose.purpose_name}
+                      </h3>
+                      {purpose.is_essential ? (
+                        <Badge variant="brand" size="sm">Essential Core</Badge>
+                      ) : (
+                        <Badge variant="cyan" size="sm">Optional AI Feature</Badge>
+                      )}
+                    </div>
+
+                    <p style={{ fontSize: "13px", color: "var(--text-sub)", lineHeight: 1.5, marginBottom: "8px" }}>
+                      {purpose.description}
+                    </p>
+
+                    <div style={{ display: "flex", gap: "14px", fontSize: "12px", color: "var(--text-dim)", flexWrap: "wrap" }}>
+                      <span>Retention: <strong style={{ color: "var(--text-sub)" }}>{purpose.retention_period_days} days</strong></span>
+                      <span>•</span>
+                      <span>Categories: <strong style={{ color: "var(--text-sub)" }}>{purpose.data_categories_collected.slice(0, 2).join(", ")}</strong></span>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                    <Badge variant={isGranted ? "success" : "neutral"} size="md" dot>
+                      {isGranted ? "Consent Granted" : "Consent Withdrawn"}
+                    </Badge>
+
+                    {!purpose.is_essential && (
+                      <button
+                        type="button"
+                        onClick={() => handleToggleConsent(purpose.purpose_id)}
+                        style={{
+                          width: "44px",
+                          height: "24px",
+                          borderRadius: "12px",
+                          background: isGranted ? "var(--accent-emerald)" : "rgba(255, 255, 255, 0.12)",
+                          border: "none",
+                          position: "relative",
+                          cursor: "pointer",
+                          transition: "background 0.2s ease",
+                        }}
+                      >
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: "2px",
+                            left: isGranted ? "22px" : "2px",
+                            width: "20px",
+                            height: "20px",
+                            borderRadius: "50%",
+                            background: "#ffffff",
+                            transition: "left 0.2s ease",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+                          }}
+                        />
+                      </button>
+                    )}
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={handleSaveConsent}
+              disabled={savingConsent}
+              icon={<CheckCircle2 size={15} />}
+            >
+              {savingConsent ? "Recording Cryptographic Consents..." : "Save Consent Choices"}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: SUBJECT ACCESS REQUEST (SAR - SECTION 11) */}
+      {activeTab === "access" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {/* Action Header Card */}
+          <Card style={{ padding: "24px", background: "linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, #0d1322 100%)", borderColor: "rgba(6, 182, 212, 0.3)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                  <Badge variant="cyan">Section 11 Right of Access</Badge>
+                  <span style={{ fontSize: "12.5px", color: "var(--text-dim)" }}>Machine-Readable JSON</span>
+                </div>
+                <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#ffffff" }}>
+                  Export Full Personal Data Archive (SAR)
+                </h3>
+                <p style={{ fontSize: "13.5px", color: "var(--text-sub)", marginTop: "4px", maxWidth: "620px", lineHeight: 1.55 }}>
+                  Download a structured, tamper-evident cryptographic JSON package containing every profile attribute, skill vector, evidence claim, and application log recorded for your account.
+                </p>
+              </div>
+
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleExportSAR}
+                disabled={exporting}
+                icon={<Download size={15} />}
+              >
+                {exporting ? "Generating Package..." : "Download SAR Package (.JSON)"}
+              </Button>
+            </div>
+          </Card>
+
+          {/* Personal Data Categories Inventory */}
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+              <Database size={16} color="var(--accent-cyan)" />
+              <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Personal Data Inventory & Storage Registry</h3>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "14px" }}>
+              {accessSummary?.categories.map((cat) => (
+                <Card key={cat.category_name} style={{ padding: "18px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-main)" }}>{cat.category_name}</span>
+                    <Badge variant="neutral" size="sm">{cat.record_count} Records</Badge>
+                  </div>
+                  <p style={{ fontSize: "12.5px", color: "var(--text-sub)", lineHeight: 1.5, margin: 0 }}>
+                    {cat.description}
+                  </p>
+                  <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: "8px", display: "flex", justifyContent: "space-between", fontSize: "11.5px", color: "var(--text-dim)" }}>
+                    <span>Location: {cat.storage_location}</span>
+                    <span>Processed: {cat.processors_involved.slice(0, 1).join(", ")}</span>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: GRIEVANCE REDRESSAL (SECTION 13) */}
+      {activeTab === "grievances" && (
+        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "22px", alignItems: "flex-start" }}>
+          {/* File a Grievance Form */}
+          <Card style={{ padding: "24px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+              <div style={{ width: "34px", height: "34px", borderRadius: "6px", background: "rgba(225, 29, 72, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-primary)" }}>
+                <HelpCircle size={18} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#ffffff" }}>Submit DPDP Grievance</h3>
+                <p style={{ fontSize: "12px", color: "var(--text-dim)" }}>Statutory resolution within 90 calendar days</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmitGrievance} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div>
+                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                  Grievance Category
+                </label>
+                <select
+                  value={grvCategory}
+                  onChange={(e) => setGrvCategory(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: "6px",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-main)",
+                    fontSize: "13.5px",
+                    outline: "none",
+                  }}
+                >
+                  <option value="CONSENT_WITHDRAWAL">Consent Withdrawal Delay or Disregard</option>
+                  <option value="UNAUTHORIZED_PROCESSING">Unauthorized Personal Data Processing</option>
+                  <option value="DATA_INACCURACY">Correction / Inaccuracy of Personal Records</option>
+                  <option value="ERASURE_FAILURE">Erasure Request Non-Compliance</option>
+                  <option value="THIRD_PARTY_DISCLOSURE">Unauthorized Sub-Processor Transfer</option>
+                  <option value="OTHER_COMPLIANCE">Other DPDP Statutory Violation</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                  Subject Summary
+                </label>
+                <input
+                  type="text"
+                  value={grvSubject}
+                  onChange={(e) => setGrvSubject(e.target.value)}
+                  placeholder="e.g. Incomplete removal of legacy LinkedIn commits"
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: "6px",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-main)",
+                    fontSize: "13.5px",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                  Detailed Description
+                </label>
+                <textarea
+                  value={grvDescription}
+                  onChange={(e) => setGrvDescription(e.target.value)}
+                  rows={4}
+                  placeholder="Describe your grievance, specific data items, and desired resolution..."
+                  style={{
+                    width: "100%",
+                    padding: "10px 12px",
+                    borderRadius: "6px",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-main)",
+                    fontSize: "13px",
+                    outline: "none",
+                    resize: "vertical",
+                    lineHeight: 1.45,
+                  }}
+                />
+              </div>
+
+              <div style={{ padding: "10px 12px", borderRadius: "6px", background: "rgba(255, 255, 255, 0.02)", border: "1px solid var(--border-subtle)", fontSize: "12px", color: "var(--text-dim)", lineHeight: 1.45 }}>
+                Assigned to: <strong style={{ color: "var(--text-sub)" }}>Designated DPO (dpo@jobpilot.dev)</strong>. If unresolved within 90 days, you retain statutory rights to appeal directly to the <strong>Data Protection Board of India</strong>.
+              </div>
+
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                disabled={submittingGrv}
+                icon={<Send size={14} />}
+              >
+                {submittingGrv ? "Filing Grievance..." : "File Statutory Grievance"}
+              </Button>
+            </form>
+          </Card>
+
+          {/* Grievance Ticket History */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-main)" }}>
+              Filed Grievance Tickets ({grievances.length})
+            </div>
+
+            {grievances.length === 0 ? (
+              <Card style={{ padding: "28px", textAlign: "center", color: "var(--text-dim)" }}>
+                <CheckCircle2 size={24} color="var(--accent-emerald)" style={{ margin: "0 auto 8px" }} />
+                <div style={{ fontSize: "13.5px", fontWeight: 600, color: "var(--text-sub)" }}>No Outstanding Grievances</div>
+                <div style={{ fontSize: "12px", marginTop: "2px" }}>All personal data handling is in good standing.</div>
+              </Card>
+            ) : (
+              grievances.map((g) => (
+                <Card key={g.id} style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--accent-cyan)", fontFamily: "var(--font-mono)" }}>
+                      #{g.ticket_id}
+                    </span>
+                    <Badge variant={g.status === "RESOLVED" ? "success" : "warning"} size="sm">
+                      {g.status}
+                    </Badge>
+                  </div>
+                  <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#f8fafc" }}>
+                    {g.subject}
+                  </div>
+                  <p style={{ fontSize: "12px", color: "var(--text-sub)", margin: 0, lineHeight: 1.45 }}>
+                    {g.description}
+                  </p>
+                  <div style={{ fontSize: "11.5px", color: "var(--text-dim)", display: "flex", justifyContent: "space-between", borderTop: "1px solid var(--border-subtle)", paddingTop: "8px" }}>
+                    <span>Filed: {new Date(g.submitted_at).toLocaleDateString()}</span>
+                    <span>Deadline: {g.days_remaining} days left</span>
+                  </div>
+                </Card>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: NOMINATION (SECTION 14) */}
+      {activeTab === "nomination" && (
+        <Card style={{ padding: "24px", maxWidth: "680px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+            <div style={{ width: "34px", height: "34px", borderRadius: "6px", background: "rgba(168, 85, 247, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-purple)" }}>
+              <UserCheck size={18} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#ffffff" }}>Register Statutory Nominee (Section 14)</h3>
+              <p style={{ fontSize: "12px", color: "var(--text-dim)" }}>Empowers your designated proxy to exercise rights in case of death or incapacitation</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSaveNomination} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+              <div>
+                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                  Nominee Full Legal Name *
+                </label>
+                <input
+                  type="text"
+                  value={nomName}
+                  onChange={(e) => setNomName(e.target.value)}
+                  placeholder="Full Legal Name"
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: "6px",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-main)",
+                    fontSize: "13.5px",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                  Nominee Email Address *
+                </label>
+                <input
+                  type="email"
+                  value={nomEmail}
+                  onChange={(e) => setNomEmail(e.target.value)}
+                  placeholder="nominee@example.com"
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: "6px",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-main)",
+                    fontSize: "13.5px",
+                    outline: "none",
+                  }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+              <div>
+                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                  Nominee Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={nomPhone}
+                  onChange={(e) => setNomPhone(e.target.value)}
+                  placeholder="+91 / International phone"
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: "6px",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-main)",
+                    fontSize: "13.5px",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                  Relationship to Data Principal
+                </label>
+                <select
+                  value={nomRel}
+                  onChange={(e) => setNomRel(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: "6px",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-main)",
+                    fontSize: "13.5px",
+                    outline: "none",
+                  }}
+                >
+                  <option value="SPOUSE">Spouse</option>
+                  <option value="PARENT">Parent / Legal Guardian</option>
+                  <option value="CHILD">Child</option>
+                  <option value="SIBLING">Sibling</option>
+                  <option value="LEGAL_REPRESENTATIVE">Legal Representative / Attorney</option>
+                  <option value="OTHER">Other Designated Beneficiary</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                Special Directives & Instructions (Optional)
+              </label>
+              <textarea
+                value={nomNotes}
+                onChange={(e) => setNomNotes(e.target.value)}
+                rows={2}
+                placeholder="Specific instructions regarding erasure or export of portfolio data upon trigger..."
+                style={{
+                  width: "100%",
+                  padding: "9px 12px",
+                  borderRadius: "6px",
+                  background: "var(--bg-input)",
+                  border: "1px solid var(--border-subtle)",
+                  color: "var(--text-main)",
+                  fontSize: "13px",
+                  outline: "none",
+                  resize: "vertical",
+                }}
+              />
+            </div>
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="md"
+              disabled={savingNom}
+              icon={<Check size={14} />}
+            >
+              {savingNom ? "Registering Nominee..." : "Save Nomination (Section 14)"}
+            </Button>
+          </form>
+        </Card>
+      )}
+
+      {/* TAB 5: RIGHT TO ERASURE (SECTION 12) */}
+      {activeTab === "erasure" && (
+        <Card style={{ padding: "28px", maxWidth: "680px", borderColor: "rgba(225, 29, 72, 0.4)", background: "linear-gradient(135deg, rgba(225, 29, 72, 0.08) 0%, #0d1322 100%)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+            <div style={{ width: "36px", height: "36px", borderRadius: "6px", background: "rgba(225, 29, 72, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-primary)" }}>
+              <Trash2 size={20} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: "18px", fontWeight: 800, color: "#fda4af" }}>Permanent Data Erasure (Right to be Forgotten)</h3>
+              <p style={{ fontSize: "12.5px", color: "var(--text-dim)" }}>Section 12 DPDP Act 2023 Statutory Erasure</p>
+            </div>
+          </div>
+
+          <p style={{ fontSize: "13.5px", color: "var(--text-sub)", lineHeight: 1.6, marginBottom: "18px" }}>
+            Triggering permanent erasure will irreversibly purge your identity graph, verified skill vectors, scraped commit histories, tailored resumes, and active application jobs from our production databases.
+          </p>
+
+          <div style={{ padding: "12px 16px", borderRadius: "6px", background: "rgba(225, 29, 72, 0.12)", border: "1px solid rgba(225, 29, 72, 0.3)", marginBottom: "20px" }}>
+            <div style={{ fontSize: "12.5px", color: "#fda4af", fontWeight: 700, marginBottom: "4px" }}>
+              Statutory Guarantee & Audit Proof
+            </div>
+            <div style={{ fontSize: "12px", color: "var(--text-sub)", lineHeight: 1.5 }}>
+              In accordance with Section 12, an anonymized SHA-256 cryptographic verification token will be generated as proof of compliance without retaining identifiable data.
+            </div>
+          </div>
+
+          <Button
+            variant="danger"
+            size="md"
+            onClick={() => setShowErasureModal(true)}
+            icon={<Trash2 size={15} />}
+          >
+            Initiate Permanent Erasure Request
+          </Button>
+        </Card>
+      )}
+
+      {/* Permanent Erasure Verification Modal */}
       {showErasureModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-rose-800/80 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-rose-400 font-bold text-lg">
-                <AlertTriangle className="w-5 h-5" />
-                Confirm Section 12 Data Erasure
+        <div
+          onClick={() => setShowErasureModal(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(7, 10, 18, 0.85)",
+            backdropFilter: "blur(6px)",
+            zIndex: 10000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            animation: "pageFadeIn 0.15s ease-out",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: "520px",
+              background: "#0d1322",
+              border: "1px solid rgba(225, 29, 72, 0.4)",
+              borderRadius: "8px",
+              boxShadow: "0 24px 48px rgba(0, 0, 0, 0.8)",
+              padding: "24px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "18px",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <AlertTriangle size={20} color="var(--accent-primary)" />
+                <h3 style={{ fontSize: "16px", fontWeight: 800, color: "#fda4af" }}>Confirm Irreversible Erasure</h3>
               </div>
               <button
                 onClick={() => setShowErasureModal(false)}
-                className="text-slate-400 hover:text-white"
+                style={{ background: "transparent", border: "none", color: "var(--text-dim)", cursor: "pointer" }}
               >
-                <X className="w-5 h-5" />
+                <X size={16} />
               </button>
             </div>
 
             {erasureSuccess ? (
-              <div className="p-4 rounded-xl bg-emerald-950/80 border border-emerald-700 text-emerald-300 text-xs space-y-2">
-                <div className="font-bold text-sm">Erasure Completed Successfully!</div>
-                <p>{erasureSuccess.message}</p>
-                <div className="font-mono text-[11px] bg-slate-950 p-2 rounded border border-emerald-800">
-                  Verification Token: {erasureSuccess.verification_token}
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px", textAlign: "center", padding: "16px 0" }}>
+                <CheckCircle2 size={36} color="var(--accent-emerald)" style={{ margin: "0 auto" }} />
+                <h4 style={{ fontSize: "16px", fontWeight: 700, color: "#ffffff" }}>Data Purged Successfully</h4>
+                <p style={{ fontSize: "13px", color: "var(--text-sub)" }}>
+                  Your personal records have been erased across all relational and vector database stores.
+                </p>
+                <div style={{ padding: "8px 12px", borderRadius: "4px", background: "var(--bg-input)", border: "1px solid var(--border-subtle)", fontFamily: "var(--font-mono)", fontSize: "11.5px", color: "var(--accent-cyan)" }}>
+                  Audit Proof: {erasureSuccess.verification_token}
                 </div>
-                <p className="text-slate-400">Redirecting to login...</p>
               </div>
             ) : (
-              <div className="space-y-4 text-xs">
-                <p className="text-slate-300">
-                  To confirm permanent and irreversible erasure of all personal data, type the following confirmation phrase exactly:
+              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                <p style={{ fontSize: "13px", color: "var(--text-sub)", lineHeight: 1.5 }}>
+                  To confirm permanent deletion, please enter the confirmation phrase exactly as displayed below:
                 </p>
-                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 font-mono text-center text-rose-400 font-bold select-all">
+
+                <div style={{ padding: "8px 12px", borderRadius: "4px", background: "rgba(225, 29, 72, 0.12)", border: "1px solid rgba(225, 29, 72, 0.3)", fontFamily: "var(--font-mono)", fontSize: "12.5px", color: "#fda4af", fontWeight: 700, textAlign: "center", userSelect: "all" }}>
                   DELETE MY PERSONAL DATA PERMANENTLY
                 </div>
 
-                <div>
-                  <label className="block text-slate-400 font-medium mb-1">Type Confirmation Phrase</label>
-                  <input
-                    type="text"
-                    value={confirmationPhrase}
-                    onChange={(e) => setConfirmationPhrase(e.target.value)}
-                    placeholder="Type phrase here..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-rose-500 font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-400 font-medium mb-1">Reason for Erasure (Optional)</label>
-                  <input
-                    type="text"
-                    value={erasureReason}
-                    onChange={(e) => setErasureReason(e.target.value)}
-                    placeholder="e.g. No longer looking for roles"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-slate-700"
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={confirmationPhrase}
+                  onChange={(e) => setConfirmationPhrase(e.target.value)}
+                  placeholder="Type confirmation phrase here..."
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: "6px",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-main)",
+                    fontSize: "13px",
+                    fontFamily: "var(--font-mono)",
+                    outline: "none",
+                  }}
+                />
 
                 {erasureError && (
-                  <div className="p-3 rounded-lg bg-rose-950/80 border border-rose-700 text-rose-300">
+                  <div style={{ fontSize: "12px", color: "#f43f5e", fontWeight: 600 }}>
                     {erasureError}
                   </div>
                 )}
 
-                <div className="flex items-center justify-end gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowErasureModal(false)}
-                    className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
-                  >
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "6px" }}>
+                  <Button variant="secondary" size="sm" onClick={() => setShowErasureModal(false)}>
                     Cancel
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
                     onClick={handleExecuteErasure}
-                    disabled={erasing || confirmationPhrase !== 'DELETE MY PERSONAL DATA PERMANENTLY'}
-                    className="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold shadow-lg shadow-rose-600/20 disabled:opacity-40"
+                    disabled={erasing || confirmationPhrase.trim() !== "DELETE MY PERSONAL DATA PERMANENTLY"}
+                    icon={<Trash2 size={13} />}
                   >
-                    {erasing ? 'Purging Personal Data...' : 'Permanently Delete Everything'}
-                  </button>
+                    {erasing ? "Purging Records..." : "Permanently Delete"}
+                  </Button>
                 </div>
               </div>
             )}
