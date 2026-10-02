@@ -47,12 +47,12 @@ class Settings(BaseSettings):
     DEFAULT_COMPLETION_MODEL: str = "gpt-4o-mini"
 
     # Source Connectors & OAuth
-    GOOGLE_CLIENT_ID: Optional[str] = None
-    GOOGLE_CLIENT_SECRET: Optional[str] = None
-    GITHUB_CLIENT_ID: Optional[str] = None
-    GITHUB_CLIENT_SECRET: Optional[str] = None
-    LINKEDIN_CLIENT_ID: Optional[str] = None
-    LINKEDIN_CLIENT_SECRET: Optional[str] = None
+    GOOGLE_CLIENT_ID: Optional[str] = "jobpilot_dev_google_client_id"
+    GOOGLE_CLIENT_SECRET: Optional[str] = "jobpilot_dev_google_client_secret"
+    GITHUB_CLIENT_ID: Optional[str] = "jobpilot_dev_github_client_id"
+    GITHUB_CLIENT_SECRET: Optional[str] = "jobpilot_dev_github_client_secret"
+    LINKEDIN_CLIENT_ID: Optional[str] = "jobpilot_dev_linkedin_client_id"
+    LINKEDIN_CLIENT_SECRET: Optional[str] = "jobpilot_dev_linkedin_client_secret"
 
     # DPDP Act 2023 & DPDP Rules 2025 Compliance Configuration
     DPDP_ENABLED: bool = True
