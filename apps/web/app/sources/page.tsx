@@ -99,14 +99,13 @@ export default function SourcesPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-            <Badge variant="neutral">Data Integrations</Badge>
-            <span style={{ fontSize: "12px", color: "var(--text-dim)" }}>Identity Provenance Hub</span>
+            <Badge variant="neutral">Integrations</Badge>
           </div>
           <h1 style={{ fontSize: "22px", fontWeight: 700 }}>
-            Your Sources
+            Connected Data Sources
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: "13px", marginTop: "2px" }}>
-            JobPilot continuously builds your professional identity graph from the trusted sources you connect.
+            Connect your accounts and resumes to automatically update your skills and job matches.
           </p>
         </div>
 
@@ -122,7 +121,7 @@ export default function SourcesPage() {
             />
           }
         >
-          {syncingId ? "Ingesting..." : "Sync All Sources"}
+          {syncingId ? "Syncing..." : "Sync All Sources"}
         </Button>
       </div>
 

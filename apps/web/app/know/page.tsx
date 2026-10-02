@@ -178,14 +178,14 @@ export default function LivingPortfolioPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">Living Portfolio</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>AI Career Operating System • Know Me</span>
+            <Badge variant="brand">Skills & Portfolio</Badge>
+            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Verified Experience</span>
           </div>
           <h1 style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.03em" }}>
-            My Living Professional Portfolio
+            Skills & Living Portfolio
           </h1>
           <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
-            Evidence-backed, continuously verified representation of your capability, architecture impact, and career readiness.
+            Your verified work history, technical skills, and projects built from your connected accounts.
           </p>
         </div>
 
@@ -205,12 +205,12 @@ export default function LivingPortfolioPage() {
           </Button>
           <Link href="/sources" prefetch={true} style={{ textDecoration: "none" }}>
             <Button variant="secondary" size="md">
-              Manage Sources ({connected_sources.length})
+              Data Sources ({connected_sources.length})
             </Button>
           </Link>
           <Link href="/prove" prefetch={true} style={{ textDecoration: "none" }}>
             <Button variant="primary" size="md" icon={<Award size={15} />}>
-              Verify Next Skill
+              Take Assessment
             </Button>
           </Link>
         </div>

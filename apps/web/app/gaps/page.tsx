@@ -43,20 +43,20 @@ export default function GapsPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "14px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">Stage 3</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Deficit Impact Diagnostics</span>
+            <Badge variant="brand">Skill Gaps</Badge>
+            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Target Role Analysis</span>
           </div>
           <h1 style={{ fontSize: "24px", fontWeight: 800, letterSpacing: "-0.025em" }}>
-            Your Biggest Gaps
+            Identified Skill Gaps
           </h1>
           <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
-            Prioritized by career impact and blocked opportunities, not merely by the number of missing keywords.
+            Key technical areas to develop to increase your match ranking for target senior roles.
           </p>
         </div>
 
         <Link href="/improve" prefetch={true} style={{ textDecoration: "none" }}>
           <Button variant="primary" size="sm" icon={<BookOpen size={14} />}>
-            Active Learning Blueprint (Stage 4)
+            View Learning Plan
           </Button>
         </Link>
       </div>

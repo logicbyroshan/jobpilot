@@ -131,14 +131,14 @@ export default function ImprovePage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">Stage 3 • Productivity Engine</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Personal Career Operating System</span>
+            <Badge variant="brand">Learning Plan</Badge>
+            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Personalized Roadmap</span>
           </div>
           <h1 style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.03em" }}>
-            Improve — Daily Career Productivity
+            Learning Plan & Tasks
           </h1>
           <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
-            Automated task prioritization derived strictly from your active opportunity bottlenecks and career goals.
+            Daily study milestones prioritized to close your skill gaps and unlock top-tier roles.
           </p>
         </div>
 
