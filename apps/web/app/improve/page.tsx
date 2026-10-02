@@ -122,7 +122,7 @@ export default function ImprovePage() {
     { key: "TODAY", label: "Today's Focus", badge: "brand" },
     { key: "IN_PROGRESS", label: "In Progress", badge: "cyan" },
     { key: "DONE", label: "Completed", badge: "success" },
-    { key: "READY_TO_PROVE", label: "Ready to Prove", badge: "purple" },
+    { key: "READY_TO_PROVE", label: "Ready to Prove", badge: "cyan" },
   ];
 
   return (

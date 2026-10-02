@@ -62,7 +62,7 @@ const lifecycleItems: NavItem[] = [
     href: "/prove",
     icon: Award,
     tag: "Ready",
-    badgeVariant: "purple",
+    badgeVariant: "neutral",
   },
   {
     name: "Applications",

@@ -28,6 +28,7 @@ export default function OpportunitiesPage() {
   const router = useRouter();
   const { showToast } = useToast();
   const [matches, setMatches] = useState<MatchItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFit, setSelectedFit] = useState<string>("ALL");
   const [savedJobs, setSavedJobs] = useState<Record<string, boolean>>({});
@@ -44,6 +45,8 @@ export default function OpportunitiesPage() {
         setMatches(data);
       } catch (err) {
         console.error("Failed to load opportunities:", err);
+      } finally {
+        setLoading(false);
       }
     }
     loadMatches();
@@ -160,24 +163,46 @@ export default function OpportunitiesPage() {
 
       {/* Opportunities Full-Width List */}
       <div style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
-        {filteredMatches.map((m) => {
-          const isSaved = !!savedJobs[m.id];
-          return (
-            <div
-              key={m.id}
-              className="ui-card ui-card-hover"
-              style={{
-                padding: "16px 18px",
-                width: "100%",
-                boxSizing: "border-box",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "10px" }}>
-                <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+        {loading ? (
+          <div className="ui-card" style={{ padding: "40px", textAlign: "center", color: "var(--text-sub)" }}>
+            <div className="ui-spinner" style={{ width: "20px", height: "20px", marginBottom: "10px" }} />
+            <p style={{ fontSize: "13px" }}>Matching opportunities against your verified skills...</p>
+          </div>
+        ) : filteredMatches.length === 0 ? (
+          <div className="ui-card" style={{ padding: "36px", textAlign: "center", color: "var(--text-muted)" }}>
+            <Target size={28} color="var(--accent-cyan)" style={{ margin: "0 auto 8px" }} />
+            <h3 style={{ fontSize: "15px", fontWeight: 700, color: "var(--text-main)" }}>No matching roles found</h3>
+            <p style={{ fontSize: "13px", color: "var(--text-sub)", marginTop: "4px" }}>
+              Try adjusting your search query or fit filter to see more opportunities.
+            </p>
+            <Button variant="secondary" size="sm" style={{ marginTop: "12px" }} onClick={() => { setSearchQuery(""); setSelectedFit("ALL"); }}>
+              Reset Filters
+            </Button>
+          </div>
+        ) : (
+          filteredMatches.map((m) => {
+            const isSaved = !!savedJobs[m.id];
+            const isTopFit = (m.overall_score || 0) >= 90;
+            return (
+              <div
+                key={m.id}
+                className="ui-card ui-card-hover"
+                style={{
+                  padding: "16px 20px",
+                  width: "100%",
+                  boxSizing: "border-box",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                }}
+              >
+              {/* Header Row: Company, Title, Meta, and Primary Actions */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" }}>
+                <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
                   <div
                     style={{
-                      width: "38px",
-                      height: "38px",
+                      width: "40px",
+                      height: "40px",
                       borderRadius: "6px",
                       background: "var(--bg-elevated)",
                       border: "1px solid var(--border-subtle)",
@@ -195,13 +220,13 @@ export default function OpportunitiesPage() {
 
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                      <h2 style={{ fontSize: "15px", fontWeight: 700, color: "var(--text-main)" }}>{m.job?.title || "Target Role"}</h2>
-                      <Badge variant={(m.overall_score || 0) >= 90 ? "success" : "cyan"} size="sm">
+                      <h2 style={{ fontSize: "15.5px", fontWeight: 700, color: "var(--text-main)" }}>{m.job?.title || "Target Role"}</h2>
+                      <Badge variant={isTopFit ? "success" : "cyan"} size="sm">
                         {(m.overall_score || 0).toFixed(0)}% Match
                       </Badge>
                     </div>
 
-                    <div style={{ display: "flex", gap: "12px", fontSize: "12.5px", color: "var(--text-sub)", marginTop: "3px", flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", gap: "14px", fontSize: "12.5px", color: "var(--text-sub)", marginTop: "3px", flexWrap: "wrap" }}>
                       <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                         <Building2 size={13} color="var(--text-muted)" /> {m.job?.company?.name || "Company"}
                       </span>
@@ -209,53 +234,15 @@ export default function OpportunitiesPage() {
                         <MapPin size={13} color="var(--text-muted)" /> {m.job?.location || "Remote"}
                       </span>
                       {m.job?.salary_min && (
-                        <span style={{ display: "flex", alignItems: "center", gap: "3px", color: "var(--accent-emerald)", fontWeight: 700 }}>
-                          <DollarSign size={13} /> ${m.job.salary_min.toLocaleString()} - ${m.job.salary_max?.toLocaleString()}
+                        <span style={{ display: "flex", alignItems: "center", gap: "3px", color: "var(--accent-emerald)", fontWeight: 600 }}>
+                          <DollarSign size={13} /> ${m.job.salary_min.toLocaleString()} – ${m.job.salary_max?.toLocaleString()}
                         </span>
                       )}
                     </div>
                   </div>
                 </div>
 
-                {/* Match Score Matrix */}
-                <div style={{ display: "flex", gap: "8px", background: "var(--bg-elevated)", padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--border-subtle)" }}>
-                  <div style={{ textAlign: "center", padding: "0 6px" }}>
-                    <div style={{ fontSize: "10.5px", color: "var(--text-dim)", textTransform: "uppercase", fontWeight: 700 }}>Tech Fit</div>
-                    <div style={{ fontSize: "13.5px", fontWeight: 800, color: "var(--accent-cyan)" }}>{m.technical_fit.toFixed(0)}%</div>
-                  </div>
-                  <div style={{ width: "1px", background: "var(--border-subtle)" }} />
-                  <div style={{ textAlign: "center", padding: "0 6px" }}>
-                    <div style={{ fontSize: "10.5px", color: "var(--text-dim)", textTransform: "uppercase", fontWeight: 700 }}>Exp Fit</div>
-                    <div style={{ fontSize: "13.5px", fontWeight: 800, color: "var(--accent-emerald)" }}>{m.experience_fit.toFixed(0)}%</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Rationale & Why Matched */}
-              <div style={{ padding: "8px 12px", background: "rgba(255, 255, 255, 0.02)", borderRadius: "6px", border: "1px solid var(--border-subtle)", marginBottom: "10px" }}>
-                <div style={{ fontSize: "12.5px", color: "var(--text-sub)", lineHeight: 1.45 }}>
-                  <strong style={{ color: "var(--text-main)" }}>Why this matches:</strong> {m.explanation || m.why_matched}
-                </div>
-              </div>
-
-              {/* Verified Matched Skills vs Gaps */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-                <div style={{ display: "flex", gap: "6px", alignItems: "center", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: "11px", color: "var(--text-dim)", fontWeight: 700 }}>Strengths:</span>
-                  {m.matched_skills_json?.slice(0, 3).map((sk) => (
-                    <Badge key={sk} variant="success" size="sm">✓ {sk}</Badge>
-                  ))}
-
-                  {m.missing_skills_json?.length > 0 && (
-                    <>
-                      <span style={{ fontSize: "11px", color: "var(--text-dim)", fontWeight: 700, marginLeft: "4px" }}>Gap:</span>
-                      {m.missing_skills_json.slice(0, 1).map((sk) => (
-                        <Badge key={sk} variant="warning" size="sm">! {sk}</Badge>
-                      ))}
-                    </>
-                  )}
-                </div>
-
+                {/* Top Right Action Buttons */}
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                   <button
                     onClick={(e) => toggleSave(m.id, m.job.title, e)}
@@ -263,7 +250,7 @@ export default function OpportunitiesPage() {
                       background: "var(--bg-elevated)",
                       border: "1px solid var(--border-subtle)",
                       borderRadius: "var(--radius-sm)",
-                      padding: "5px 10px",
+                      padding: "6px 10px",
                       color: isSaved ? "var(--accent-amber)" : "var(--text-sub)",
                       fontSize: "12px",
                       fontWeight: 600,
@@ -294,9 +281,69 @@ export default function OpportunitiesPage() {
                   </Link>
                 </div>
               </div>
+
+              {/* Rationale / Why Matched Summary */}
+              <div style={{ padding: "8px 12px", background: "rgba(255, 255, 255, 0.02)", borderRadius: "6px", border: "1px solid var(--border-subtle)" }}>
+                <p style={{ fontSize: "12.5px", color: "var(--text-sub)", lineHeight: 1.45, margin: 0 }}>
+                  <strong style={{ color: "var(--text-main)" }}>Why this matches:</strong> {m.explanation || m.why_matched}
+                </p>
+              </div>
+
+              {/* Verified Matched Skills & Tech Alignment */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
+                <div style={{ display: "flex", gap: "6px", alignItems: "center", flexWrap: "wrap" }}>
+                  <span style={{ fontSize: "11px", color: "var(--text-dim)", fontWeight: 700 }}>Strengths:</span>
+                  {m.matched_skills_json?.slice(0, 4).map((sk) => (
+                    <span
+                      key={sk}
+                      style={{
+                        fontSize: "11px",
+                        padding: "2px 7px",
+                        borderRadius: "4px",
+                        background: "rgba(255, 255, 255, 0.04)",
+                        border: "1px solid var(--border-subtle)",
+                        color: "var(--text-sub)",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      <span style={{ color: "var(--accent-emerald)", fontWeight: 700 }}>✓</span> {sk}
+                    </span>
+                  ))}
+
+                  {m.missing_skills_json?.length > 0 && (
+                    <>
+                      <span style={{ fontSize: "11px", color: "var(--text-dim)", fontWeight: 700, marginLeft: "4px" }}>Gap:</span>
+                      {m.missing_skills_json.slice(0, 1).map((sk) => (
+                        <span
+                          key={sk}
+                          style={{
+                            fontSize: "11px",
+                            padding: "2px 7px",
+                            borderRadius: "4px",
+                            background: "rgba(245, 158, 11, 0.08)",
+                            border: "1px solid rgba(245, 158, 11, 0.2)",
+                            color: "#fbbf24",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                        >
+                          <span>!</span> {sk}
+                        </span>
+                      ))}
+                    </>
+                  )}
+                </div>
+
+                <div style={{ fontSize: "11.5px", color: "var(--text-dim)" }}>
+                  Tech Fit: <strong style={{ color: "var(--accent-cyan)" }}>{m.technical_fit.toFixed(0)}%</strong> • Exp Fit: <strong style={{ color: "var(--accent-emerald)" }}>{m.experience_fit.toFixed(0)}%</strong>
+                </div>
+              </div>
             </div>
           );
-        })}
+        }))}
       </div>
 
       {/* Quick Tailor & Apply Modal */}

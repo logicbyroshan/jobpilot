@@ -382,10 +382,10 @@ export default function LivingPortfolioPage() {
           <div className="ui-card" style={{ padding: "16px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                <Award size={15} color="var(--accent-purple)" />
+                <Award size={15} color="var(--accent-primary)" />
                 <h3 style={{ fontSize: "14px", fontWeight: 700 }}>Verified Skills</h3>
               </div>
-              <Link href="/prove" prefetch={true} style={{ fontSize: "12px", color: "var(--accent-purple)", fontWeight: 600, textDecoration: "none" }}>
+              <Link href="/prove" prefetch={true} style={{ fontSize: "12px", color: "var(--accent-primary)", fontWeight: 600, textDecoration: "none" }}>
                 Prove Skills →
               </Link>
             </div>
