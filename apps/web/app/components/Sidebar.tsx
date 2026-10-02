@@ -40,43 +40,31 @@ const lifecycleItems: NavItem[] = [
     name: "Skills & Profile",
     href: "/know",
     icon: UserCheck,
-    tag: "Verified",
-    badgeVariant: "neutral",
   },
   {
     name: "Opportunities",
     href: "/opportunities",
     icon: Target,
-    tag: "94% Fit",
-    badgeVariant: "cyan",
   },
   {
     name: "Learning Plan",
     href: "/improve",
     icon: BookOpen,
-    tag: "Tasks",
-    badgeVariant: "neutral",
   },
   {
     name: "Assessments",
     href: "/prove",
     icon: Award,
-    tag: "Ready",
-    badgeVariant: "neutral",
   },
   {
     name: "Applications",
     href: "/applications",
     icon: Send,
-    tag: "2 Active",
-    badgeVariant: "neutral",
   },
   {
     name: "Analytics",
     href: "/outcomes",
     icon: TrendingUp,
-    tag: "1 Offer",
-    badgeVariant: "success",
   },
 ];
 
@@ -85,8 +73,6 @@ const secondaryItems: NavItem[] = [
     name: "Data Sources",
     href: "/sources",
     icon: FolderGit2,
-    tag: "4 Active",
-    badgeVariant: "neutral",
   },
   {
     name: "Automation",
@@ -94,11 +80,9 @@ const secondaryItems: NavItem[] = [
     icon: Sliders,
   },
   {
-    name: "Privacy Center",
+    name: "Privacy & Data",
     href: "/settings/privacy",
     icon: Shield,
-    tag: "DPDP",
-    badgeVariant: "brand",
   },
 ];
 
@@ -184,22 +168,15 @@ export function Sidebar() {
       <div style={{ padding: "12px 8px", flex: 1, overflowY: "auto" }}>
         <div
           style={{
-            fontSize: "10px",
+            fontSize: "10.5px",
             fontWeight: 700,
             textTransform: "uppercase",
             letterSpacing: "0.06em",
             color: "var(--text-dim)",
-            padding: "4px 10px 8px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+            padding: "4px 12px 8px",
           }}
         >
-          <span>Career Journey</span>
-          <span style={{ fontSize: "9.5px", color: "var(--accent-emerald)", display: "flex", alignItems: "center", gap: "4px" }}>
-            <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "var(--accent-emerald)" }} />
-            Active
-          </span>
+          Career Journey
         </div>
 
         <nav style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
@@ -263,7 +240,7 @@ export function Sidebar() {
 
         <div
           style={{
-            fontSize: "11px",
+            fontSize: "10.5px",
             fontWeight: 700,
             textTransform: "uppercase",
             letterSpacing: "0.06em",
@@ -271,7 +248,7 @@ export function Sidebar() {
             padding: "4px 12px 6px",
           }}
         >
-          Platform & Data
+          Preferences
         </div>
 
         <nav style={{ display: "flex", flexDirection: "column", gap: "3px" }}>

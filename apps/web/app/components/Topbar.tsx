@@ -298,13 +298,12 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps = {}) {
                   style={{
                     padding: "6px 8px",
                     fontSize: "12px",
-                    color: "var(--accent-primary)",
+                    color: "var(--text-main)",
                     borderRadius: "4px",
                     textDecoration: "none",
-                    fontWeight: 600,
                   }}
                 >
-                  Privacy & DPDP Rights
+                  Privacy & Data Rights
                 </Link>
 
                 <div style={{ margin: "4px 0", height: "1px", background: "var(--border-subtle)" }} />
