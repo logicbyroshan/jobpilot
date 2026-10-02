@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Target,
   Building2,
@@ -10,18 +11,31 @@ import {
   Sparkles,
   Bookmark,
   ArrowRight,
+  Send,
+  CheckCircle2,
+  X,
+  FileText,
+  Zap,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import { MatchItem } from "@/lib/types";
+import { MatchItem, Job } from "@/lib/types";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { SearchBar } from "../components/ui/SearchBar";
+import { useToast } from "@/lib/toast-context";
 
 export default function OpportunitiesPage() {
+  const router = useRouter();
+  const { showToast } = useToast();
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFit, setSelectedFit] = useState<string>("ALL");
   const [savedJobs, setSavedJobs] = useState<Record<string, boolean>>({});
+
+  // Quick Apply Modal State
+  const [selectedMatchForApply, setSelectedMatchForApply] = useState<MatchItem | null>(null);
+  const [submittingApply, setSubmittingApply] = useState(false);
+  const [customPitchNote, setCustomPitchNote] = useState("");
 
   useEffect(() => {
     async function loadMatches() {
@@ -35,10 +49,38 @@ export default function OpportunitiesPage() {
     loadMatches();
   }, []);
 
-  const toggleSave = (id: string, e: React.MouseEvent) => {
+  const toggleSave = (id: string, jobTitle: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setSavedJobs((prev) => ({ ...prev, [id]: !prev[id] }));
+    const willSave = !savedJobs[id];
+    setSavedJobs((prev) => ({ ...prev, [id]: willSave }));
+    showToast(willSave ? `Saved "${jobTitle}" to bookmarks` : `Removed "${jobTitle}" from bookmarks`, "info");
+  };
+
+  const handleOpenQuickApply = (match: MatchItem, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedMatchForApply(match);
+    setCustomPitchNote(`Verified experience in distributed systems and consensus matches ${match.job.company.name}'s requirements.`);
+  };
+
+  const handleExecuteQuickApply = async () => {
+    if (!selectedMatchForApply) return;
+    setSubmittingApply(true);
+    try {
+      await api.createApplication({
+        job_id: selectedMatchForApply.job.id,
+        tailored_role_title: selectedMatchForApply.job.title,
+        notes: customPitchNote,
+      });
+      showToast(`Application successfully submitted for "${selectedMatchForApply.job.title}" at ${selectedMatchForApply.job.company.name}!`, "success");
+      setSelectedMatchForApply(null);
+    } catch (err) {
+      console.error("Quick apply error:", err);
+      showToast("Failed to submit application.", "error");
+    } finally {
+      setSubmittingApply(false);
+    }
   };
 
   const filteredMatches = matches.filter((m) => {
@@ -216,7 +258,7 @@ export default function OpportunitiesPage() {
 
                 <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                   <button
-                    onClick={(e) => toggleSave(m.id, e)}
+                    onClick={(e) => toggleSave(m.id, m.job.title, e)}
                     style={{
                       background: "var(--bg-elevated)",
                       border: "1px solid var(--border-subtle)",
@@ -236,9 +278,18 @@ export default function OpportunitiesPage() {
                     <span>{isSaved ? "Saved" : "Save"}</span>
                   </button>
 
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon={<Send size={13} color="var(--accent-primary)" />}
+                    onClick={(e) => handleOpenQuickApply(m, e)}
+                  >
+                    Quick Apply
+                  </Button>
+
                   <Link href={`/opportunities/${m.job.id}`} prefetch={true} style={{ textDecoration: "none" }}>
-                    <Button variant="primary" size="md" icon={<ArrowRight size={14} />} iconPosition="right">
-                      View Opportunity
+                    <Button variant="primary" size="sm" icon={<ArrowRight size={14} />} iconPosition="right">
+                      Deep Dive
                     </Button>
                   </Link>
                 </div>
@@ -247,6 +298,130 @@ export default function OpportunitiesPage() {
           );
         })}
       </div>
+
+      {/* Quick Tailor & Apply Modal */}
+      {selectedMatchForApply && (
+        <div
+          onClick={() => setSelectedMatchForApply(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(7, 10, 18, 0.8)",
+            backdropFilter: "blur(6px)",
+            zIndex: 10000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            animation: "pageFadeIn 0.15s ease-out",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: "520px",
+              background: "#0d1322",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "8px",
+              boxShadow: "0 24px 48px rgba(0, 0, 0, 0.7)",
+              padding: "24px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "18px",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ width: "36px", height: "36px", borderRadius: "6px", background: "rgba(225, 29, 72, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-primary)" }}>
+                  <Send size={18} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#f8fafc" }}>
+                    {selectedMatchForApply.job.title}
+                  </h3>
+                  <p style={{ fontSize: "12px", color: "var(--accent-cyan)", fontWeight: 600 }}>
+                    {selectedMatchForApply.job.company.name} • {selectedMatchForApply.overall_score.toFixed(0)}% Calculated Fit
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedMatchForApply(null)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "var(--text-dim)",
+                  cursor: "pointer",
+                  padding: "4px",
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Matched Evidence Summary */}
+            <div style={{ padding: "12px 14px", borderRadius: "6px", background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase", color: "var(--text-dim)", letterSpacing: "0.05em" }}>
+                Auto-Matched Verified Strengths
+              </div>
+              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                {selectedMatchForApply.matched_skills_json?.map((sk) => (
+                  <Badge key={sk} variant="success" size="sm">✓ {sk}</Badge>
+                ))}
+              </div>
+            </div>
+
+            {/* Tailored Cover Pitch */}
+            <div>
+              <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                Tailored Application Pitch Note
+              </label>
+              <textarea
+                value={customPitchNote}
+                onChange={(e) => setCustomPitchNote(e.target.value)}
+                rows={3}
+                style={{
+                  width: "100%",
+                  padding: "10px 12px",
+                  borderRadius: "6px",
+                  background: "var(--bg-input)",
+                  border: "1px solid var(--border-subtle)",
+                  color: "var(--text-main)",
+                  fontSize: "13px",
+                  outline: "none",
+                  resize: "vertical",
+                  lineHeight: 1.45,
+                }}
+              />
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
+              <Link href={`/opportunities/${selectedMatchForApply.job.id}`} onClick={() => setSelectedMatchForApply(null)} style={{ fontSize: "12.5px", color: "var(--text-sub)", textDecoration: "underline" }}>
+                View Full Role Requirements
+              </Link>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setSelectedMatchForApply(null)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleExecuteQuickApply}
+                  disabled={submittingApply}
+                  icon={<Send size={13} />}
+                >
+                  {submittingApply ? "Submitting..." : "Submit Application"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

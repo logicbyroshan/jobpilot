@@ -31,8 +31,10 @@ import { DailyPlan, LearningTask, CustomSkillAnalysis } from "@/lib/types";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { Card } from "../components/ui/Card";
+import { useToast } from "@/lib/toast-context";
 
 export default function ImprovePage() {
+  const { showToast } = useToast();
   const [dailyPlan, setDailyPlan] = useState<DailyPlan | null>(null);
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
   const [loading, setLoading] = useState(true);
@@ -60,11 +62,16 @@ export default function ImprovePage() {
   const handleStatusChange = async (taskId: string, newStatus: string) => {
     try {
       await api.updateTaskStatus(taskId, newStatus);
-      // Reload daily plan
       const refreshed = await api.getDailyPlan();
       setDailyPlan(refreshed);
+      if (newStatus === "COMPLETED") {
+        showToast("Task marked complete! Competency score boosted.", "success");
+      } else {
+        showToast(`Task moved to ${newStatus}`, "info");
+      }
     } catch (err) {
       console.error("Error updating task status:", err);
+      showToast("Failed to update task status.", "error");
     }
   };
 
@@ -73,8 +80,10 @@ export default function ImprovePage() {
     try {
       const refreshed = await api.planMyWeek({ available_hours_per_week: 10.0 });
       setDailyPlan(refreshed);
+      showToast("Generated optimized weekly learning blueprint!", "success");
     } catch (err) {
       console.error("Failed to plan week:", err);
+      showToast("Failed to generate plan.", "error");
     } finally {
       setPlanningWeek(false);
     }
@@ -91,8 +100,10 @@ export default function ImprovePage() {
       setCustomAnalysis(analysis);
       const refreshed = await api.getDailyPlan();
       setDailyPlan(refreshed);
+      showToast(`Custom skill analysis ready for "${customSkillName}"!`, "success");
     } catch (err) {
       console.error("Failed to analyze custom skill:", err);
+      showToast("Analysis failed.", "error");
     } finally {
       setAnalyzingCustom(false);
     }

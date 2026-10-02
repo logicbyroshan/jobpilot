@@ -34,8 +34,11 @@ import {
 import { Button } from "./components/ui/Button";
 import { Badge } from "./components/ui/Badge";
 import { Card } from "./components/ui/Card";
+import { useToast } from "@/lib/toast-context";
+import { Edit3, X, Check, DollarSign, Building } from "lucide-react";
 
 export default function OverviewPage() {
+  const { showToast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [goal, setGoal] = useState<CareerGoal | null>(null);
   const [matches, setMatches] = useState<MatchItem[]>([]);
@@ -45,6 +48,12 @@ export default function OverviewPage() {
   const [funnel, setFunnel] = useState<FunnelAnalytics | null>(null);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [recalculating, setRecalculating] = useState(false);
+
+  // Goal Modal State
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [editRole, setEditRole] = useState("");
+  const [editComp, setEditComp] = useState("");
+  const [savingGoal, setSavingGoal] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -60,6 +69,8 @@ export default function OverviewPage() {
         ]);
         setProfile(profData);
         setGoal(goalData);
+        setEditRole(goalData?.target_role || "Staff Distributed Systems Architect");
+        setEditComp(goalData?.target_salary_range || "$240k – $320k + Equity");
         setMatches(matchData);
         setGaps(gapData);
         setPlans(planData);
@@ -78,10 +89,33 @@ export default function OverviewPage() {
     try {
       const updatedMatches = await api.recalculateMatches();
       setMatches(updatedMatches);
+      showToast("Career radar & match fit scores recalculated!", "success");
     } catch (err) {
       console.error("Error recalculating matches:", err);
+      showToast("Failed to recalculate matches.", "error");
     } finally {
       setRecalculating(false);
+    }
+  };
+
+  const handleSaveGoal = async () => {
+    if (!editRole.trim()) return;
+    setSavingGoal(true);
+    try {
+      const updated = await api.updateCareerGoal({
+        target_role: editRole,
+        target_salary_range: editComp,
+      });
+      setGoal(updated);
+      setIsGoalModalOpen(false);
+      showToast(`Target goal updated to "${editRole}"!`, "success");
+      // Auto trigger recalculation
+      handleRecalculate();
+    } catch (err) {
+      console.error("Error saving goal:", err);
+      showToast("Failed to update career goal.", "error");
+    } finally {
+      setSavingGoal(false);
     }
   };
 
@@ -136,6 +170,15 @@ export default function OverviewPage() {
         </div>
 
         <div style={{ display: "flex", gap: "8px" }}>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsGoalModalOpen(true)}
+            icon={<Edit3 size={13} color="var(--accent-cyan)" />}
+          >
+            Edit Target Direction
+          </Button>
+
           <Button
             variant="secondary"
             size="sm"
@@ -442,6 +485,134 @@ export default function OverviewPage() {
           ))}
         </div>
       </div>
+
+      {/* Goal Edit Modal */}
+      {isGoalModalOpen && (
+        <div
+          onClick={() => setIsGoalModalOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(7, 10, 18, 0.8)",
+            backdropFilter: "blur(6px)",
+            zIndex: 10000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            animation: "pageFadeIn 0.15s ease-out",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: "480px",
+              background: "#0d1322",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "8px",
+              boxShadow: "0 24px 48px rgba(0, 0, 0, 0.7)",
+              padding: "24px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "18px",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ width: "32px", height: "32px", borderRadius: "6px", background: "rgba(6, 182, 212, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-cyan)" }}>
+                  <Target size={18} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#f8fafc" }}>Set Target Direction</h3>
+                  <p style={{ fontSize: "12px", color: "var(--text-dim)" }}>Calibrates opportunity matching & gap diagnostics</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsGoalModalOpen(false)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "var(--text-dim)",
+                  cursor: "pointer",
+                  padding: "4px",
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div>
+                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                  Target Role Title
+                </label>
+                <input
+                  type="text"
+                  value={editRole}
+                  onChange={(e) => setEditRole(e.target.value)}
+                  placeholder="e.g. Staff Distributed Systems Architect"
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: "6px",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-main)",
+                    fontSize: "13.5px",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                  Target Total Compensation Range
+                </label>
+                <input
+                  type="text"
+                  value={editComp}
+                  onChange={(e) => setEditComp(e.target.value)}
+                  placeholder="e.g. $240k – $320k + Equity"
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    borderRadius: "6px",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-main)",
+                    fontSize: "13.5px",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              <div style={{ padding: "10px 12px", borderRadius: "6px", background: "rgba(225, 29, 72, 0.08)", border: "1px solid rgba(225, 29, 72, 0.2)", fontSize: "12px", color: "var(--text-sub)", lineHeight: 1.4 }}>
+                <strong style={{ color: "#fda4af" }}>AI Radar Impact:</strong> Updating your target role will dynamically re-rank all opportunity match percentages and highlight your critical learning gaps.
+              </div>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "4px" }}>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsGoalModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleSaveGoal}
+                disabled={savingGoal}
+                icon={<Check size={14} />}
+              >
+                {savingGoal ? "Saving..." : "Save & Recalculate"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

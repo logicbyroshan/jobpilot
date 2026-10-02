@@ -29,8 +29,11 @@ import { LivingPortfolioResponse, CategorizedSkillItem } from "@/lib/types";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { Card } from "../components/ui/Card";
+import { useToast } from "@/lib/toast-context";
+import { Share2, Copy } from "lucide-react";
 
 export default function LivingPortfolioPage() {
+  const { showToast } = useToast();
   const [portfolio, setPortfolio] = useState<LivingPortfolioResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"portfolio" | "narrative" | "skills" | "work" | "sources">("portfolio");
@@ -186,10 +189,23 @@ export default function LivingPortfolioPage() {
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <Button
+            variant="secondary"
+            size="md"
+            icon={<Share2 size={14} color="var(--accent-cyan)" />}
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                navigator.clipboard?.writeText(window.location.href);
+                showToast("Portfolio link copied to clipboard!", "success");
+              }
+            }}
+          >
+            Share Portfolio
+          </Button>
           <Link href="/sources" prefetch={true} style={{ textDecoration: "none" }}>
             <Button variant="secondary" size="md">
-              Manage Sources ({connected_sources.length} Connected)
+              Manage Sources ({connected_sources.length})
             </Button>
           </Link>
           <Link href="/prove" prefetch={true} style={{ textDecoration: "none" }}>
@@ -228,7 +244,7 @@ export default function LivingPortfolioPage() {
                 boxShadow: "0 8px 24px rgba(230,57,70,0.3)",
               }}
             >
-              {hero.full_name?.split(" ").map((n) => n[0]).join("") || "AC"}
+              {hero.full_name?.split(" ").map((n: string) => n[0]).join("") || "AC"}
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
@@ -403,7 +419,7 @@ export default function LivingPortfolioPage() {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {experiences.map((exp, idx) => (
+            {experiences.map((exp: any, idx: number) => (
               <Card key={idx} style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" }}>
                   <div>
@@ -456,7 +472,7 @@ export default function LivingPortfolioPage() {
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-            {projects.map((proj, pIdx) => (
+            {projects.map((proj: any, pIdx: number) => (
               <Card key={pIdx} style={{ padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "16px" }}>
                 <div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
@@ -620,7 +636,7 @@ export default function LivingPortfolioPage() {
       {/* TAB CONTENT: CONNECTED SOURCES */}
       {activeTab === "sources" && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-          {connected_sources.map((src) => (
+          {connected_sources.map((src: any) => (
             <Card key={src.name} style={{ padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                 <div style={{ width: "42px", height: "42px", borderRadius: "8px", background: "rgba(255,255,255,0.04)", display: "flex", alignItems: "center", justifyContent: "center" }}>
