@@ -691,6 +691,33 @@ export const api = {
     return { status: "SYNCED", source_id: sourceId };
   },
 
+  async connectSource(sourceType: string, payload: { source_url: string; display_name?: string; mock_token?: string }): Promise<any> {
+    apiCache.delete("sources");
+    apiCache.delete("skills");
+    apiCache.delete("profile");
+    try {
+      const res = await fetchWithTimeout(`${API_BASE_URL}/sources/${sourceType}/connect`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeader() },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn("Connect source fallback", e);
+    }
+    const newSource: SourceItem = {
+      id: `src-${Date.now()}`,
+      source_type: sourceType,
+      display_name: payload.display_name || `${sourceType.toUpperCase()} - ${payload.source_url}`,
+      source_url: payload.source_url,
+      status: "CONNECTED",
+      items_ingested_count: 8,
+      last_synced_at: new Date().toISOString(),
+    };
+    MOCK_SOURCES.push(newSource);
+    return newSource;
+  },
+
   async getSkillsProfile(): Promise<SkillEvidenceItem[]> {
     const cacheKey = "skills";
     const cached = apiCache.get(cacheKey);

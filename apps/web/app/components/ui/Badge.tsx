@@ -1,7 +1,7 @@
 import React from "react";
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: "brand" | "neutral" | "success" | "warning" | "cyan" | "purple" | "danger";
+  variant?: "brand" | "primary" | "neutral" | "success" | "emerald" | "warning" | "amber" | "cyan" | "purple" | "danger" | "rose";
   size?: "sm" | "md";
   dot?: boolean;
   icon?: React.ReactNode;
@@ -24,6 +24,12 @@ export function Badge({
       border: "rgba(225, 29, 72, 0.25)",
       dotColor: "#e11d48",
     },
+    primary: {
+      bg: "rgba(225, 29, 72, 0.12)",
+      color: "#fda4af",
+      border: "rgba(225, 29, 72, 0.25)",
+      dotColor: "#e11d48",
+    },
     neutral: {
       bg: "rgba(255, 255, 255, 0.05)",
       color: "var(--text-muted)",
@@ -36,7 +42,19 @@ export function Badge({
       border: "rgba(16, 185, 129, 0.25)",
       dotColor: "#10b981",
     },
+    emerald: {
+      bg: "rgba(16, 185, 129, 0.1)",
+      color: "#34d399",
+      border: "rgba(16, 185, 129, 0.25)",
+      dotColor: "#10b981",
+    },
     warning: {
+      bg: "rgba(245, 158, 11, 0.1)",
+      color: "#fbbf24",
+      border: "rgba(245, 158, 11, 0.25)",
+      dotColor: "#f59e0b",
+    },
+    amber: {
       bg: "rgba(245, 158, 11, 0.1)",
       color: "#fbbf24",
       border: "rgba(245, 158, 11, 0.25)",
@@ -59,6 +77,12 @@ export function Badge({
       color: "#fca5a5",
       border: "rgba(239, 68, 68, 0.3)",
       dotColor: "#ef4444",
+    },
+    rose: {
+      bg: "rgba(244, 63, 94, 0.12)",
+      color: "#fda4af",
+      border: "rgba(244, 63, 94, 0.3)",
+      dotColor: "#f43f5e",
     },
   };
 

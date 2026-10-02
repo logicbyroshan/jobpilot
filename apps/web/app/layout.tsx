@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AppShell } from "./components/AppShell";
 import { AuthProvider } from "@/lib/auth-context";
+import { ToastProvider } from "@/lib/toast-context";
 
 export const metadata: Metadata = {
   title: "JobPilot — AI Career Operating System",
@@ -30,7 +31,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="dark">
         <AuthProvider>
-          <AppShell>{children}</AppShell>
+          <ToastProvider>
+            <AppShell>{children}</AppShell>
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>

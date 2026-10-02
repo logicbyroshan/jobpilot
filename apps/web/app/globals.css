@@ -25,6 +25,20 @@
   --accent-purple: #a855f7;
   --accent-rose: #f43f5e;
 
+  /* Aliases for universal compatibility */
+  --brand: var(--accent-primary);
+  --brand-hover: var(--accent-primary-hover);
+  --cyan: var(--accent-cyan);
+  --emerald: var(--accent-emerald);
+  --amber: var(--accent-amber);
+  --purple: var(--accent-purple);
+  --rose: var(--accent-rose);
+  --card-bg: var(--bg-card);
+  --surface: var(--bg-elevated);
+  --border: var(--border-subtle);
+  --text-title: var(--text-main);
+  --text-body: var(--text-sub);
+
   /* High-Legibility Typography Scale */
   --text-main: #f8fafc;
   --text-sub: #cbd5e1;
