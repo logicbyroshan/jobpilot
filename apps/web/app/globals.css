@@ -2,28 +2,27 @@
 
 :root {
   /* Slate Obsidian Dark Palette */
-  --bg-main: #070a13;
-  --bg-card: #0c1220;
-  --bg-card-hover: #111827;
-  --bg-elevated: #141c2e;
-  --bg-input: #090e1a;
+  --bg-main: #080c14;
+  --bg-card: #0d1320;
+  --bg-card-hover: #121929;
+  --bg-elevated: #151e30;
+  --bg-input: #090e18;
 
-  /* Crisp Micro-Borders */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-subtle-hover: rgba(255, 255, 255, 0.16);
-  --border-active: rgba(225, 29, 72, 0.4);
+  /* Crisp Hairline Micro-Borders */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-subtle-hover: rgba(255, 255, 255, 0.14);
+  --border-active: rgba(225, 29, 72, 0.35);
   --border-focus: #e11d48;
 
-  /* JobPilot Crimson Brand Accent */
+  /* Harmonious Color Accents (Calibrated for Low Cognitive Load) */
   --accent-primary: #e11d48;
   --accent-primary-hover: #be123c;
   --accent-secondary: #f43f5e;
-
-  /* Semantic Status Accents */
+  --accent-indigo: #6366f1;
   --accent-emerald: #10b981;
   --accent-amber: #f59e0b;
   --accent-cyan: #06b6d4;
-  --accent-purple: #a855f7;
+  --accent-purple: #8b5cf6;
   --accent-rose: #f43f5e;
 
   /* Universal Aliases */
@@ -78,7 +77,7 @@
 }
 
 ::selection {
-  background: rgba(225, 29, 72, 0.3);
+  background: rgba(225, 29, 72, 0.25);
   color: #ffffff;
 }
 
@@ -104,41 +103,41 @@ html, body {
   background: var(--bg-main);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-xs);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 /* Typography Hierarchy */
 h1 {
   color: var(--text-main);
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   line-height: 1.25;
 }
 
 h2 {
   color: var(--text-main);
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   line-height: 1.35;
 }
 
 h3 {
   color: var(--text-main);
-  font-size: 14.5px;
-  font-weight: 700;
-  letter-spacing: -0.015em;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 1.4;
 }
 
 h4, h5, h6 {
   color: var(--text-main);
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.4;
 }
@@ -166,7 +165,7 @@ a {
 
 .sidebar {
   width: 240px;
-  background: #090e1a;
+  background: #090e18;
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
@@ -190,7 +189,7 @@ a {
 
 .topbar {
   height: 54px;
-  background: rgba(7, 10, 19, 0.85);
+  background: rgba(8, 12, 20, 0.85);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
@@ -204,7 +203,7 @@ a {
 }
 
 .page-body {
-  padding: 24px 28px 48px;
+  padding: 22px 28px 48px;
   flex: 1;
   width: 100%;
   max-width: 1440px;
@@ -220,7 +219,7 @@ a {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 50% 15%, #131d33 0%, #070a12 70%);
+  background: radial-gradient(circle at 50% 15%, #111a2e 0%, #080c14 70%);
   padding: 24px;
   position: relative;
   z-index: var(--z-base);
@@ -231,64 +230,63 @@ a {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 18px 20px;
+  padding: 16px 18px;
   position: relative;
-  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .ui-card-hover:hover {
   border-color: var(--border-subtle-hover);
   background-color: var(--bg-card-hover);
-  transform: translateY(-2px);
 }
 
-/* Badges */
+/* Badges (Calibrated & Restrained) */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 8px;
+  gap: 4px;
+  padding: 2px 7px;
   border-radius: var(--radius-xs);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
 .badge-primary, .badge-brand {
-  background: rgba(225, 29, 72, 0.12);
+  background: rgba(225, 29, 72, 0.08);
   color: #fda4af;
-  border: 1px solid rgba(225, 29, 72, 0.25);
+  border: 1px solid rgba(225, 29, 72, 0.2);
 }
 
 .badge-emerald, .badge-success {
-  background: rgba(16, 185, 129, 0.12);
+  background: rgba(16, 185, 129, 0.08);
   color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .badge-amber, .badge-warning {
-  background: rgba(245, 158, 11, 0.12);
+  background: rgba(245, 158, 11, 0.08);
   color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .badge-cyan, .badge-info {
-  background: rgba(6, 182, 212, 0.12);
-  color: #22d3ee;
-  border: 1px solid rgba(6, 182, 212, 0.25);
+  background: rgba(6, 182, 212, 0.08);
+  color: #38bdf8;
+  border: 1px solid rgba(6, 182, 212, 0.2);
 }
 
 .badge-purple {
-  background: rgba(168, 85, 247, 0.12);
-  color: #d8b4fe;
-  border: 1px solid rgba(168, 85, 247, 0.25);
+  background: rgba(139, 92, 246, 0.08);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
 .badge-subtle, .badge-neutral {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-sub);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 /* Buttons */

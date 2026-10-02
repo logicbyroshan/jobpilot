@@ -231,8 +231,8 @@ export default function OverviewPage() {
           <div
             className="ui-card"
             style={{
-              background: "linear-gradient(135deg, #0e1526 0%, #090e1b 100%)",
-              border: "1px solid rgba(168, 85, 247, 0.3)",
+              background: "linear-gradient(135deg, rgba(225, 29, 72, 0.05) 0%, rgba(13, 19, 32, 1) 100%)",
+              border: "1px solid rgba(225, 29, 72, 0.25)",
               padding: "16px 20px",
             }}
           >
@@ -243,23 +243,23 @@ export default function OverviewPage() {
                     width: "40px",
                     height: "40px",
                     borderRadius: "6px",
-                    background: "rgba(168, 85, 247, 0.12)",
-                    border: "1px solid rgba(168, 85, 247, 0.3)",
+                    background: "rgba(225, 29, 72, 0.1)",
+                    border: "1px solid rgba(225, 29, 72, 0.25)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     flexShrink: 0,
                   }}
                 >
-                  <Award size={20} color="var(--accent-purple)" />
+                  <Award size={20} color="var(--accent-primary)" />
                 </div>
 
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-                    <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#d8b4fe", letterSpacing: "0.05em" }}>
+                    <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#fda4af", letterSpacing: "0.05em" }}>
                       Recommended Action
                     </span>
-                    <Badge variant="purple" size="sm">20 min</Badge>
+                    <Badge variant="neutral" size="sm">20 min</Badge>
                   </div>
                   <h2 style={{ fontSize: "15.5px", fontWeight: 700, color: "var(--text-main)" }}>
                     Verify Skill: Distributed Consensus & Raft

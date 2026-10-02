@@ -100,8 +100,8 @@ export default function ProvePage() {
       <div
         className="ui-card"
         style={{
-          background: "linear-gradient(135deg, rgba(168,85,247,0.06) 0%, rgba(12,18,32,0.98) 100%)",
-          borderColor: "rgba(168,85,247,0.25)",
+          background: "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(12, 18, 32, 0.98) 100%)",
+          borderColor: "rgba(16, 185, 129, 0.22)",
           padding: "16px 20px",
           display: "flex",
           justifyContent: "space-between",
@@ -111,7 +111,7 @@ export default function ProvePage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ width: "38px", height: "38px", borderRadius: "6px", background: "rgba(168,85,247,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-purple)" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "6px", background: "rgba(16, 185, 129, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-emerald)" }}>
             <ShieldCheck size={22} />
           </div>
           <div>
@@ -121,7 +121,7 @@ export default function ProvePage() {
             </p>
           </div>
         </div>
-        <Badge variant="purple" icon={<Lock size={12} />} size="sm">
+        <Badge variant="success" icon={<Lock size={12} />} size="sm">
           Verified Proof
         </Badge>
       </div>
