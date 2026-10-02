@@ -20,7 +20,11 @@ import { NotificationItem, UserProfile } from "@/lib/types";
 import { SearchBar } from "./ui/SearchBar";
 import { Button } from "./ui/Button";
 
-export function Topbar() {
+interface TopbarProps {
+  onOpenCommandPalette?: () => void;
+}
+
+export function Topbar({ onOpenCommandPalette }: TopbarProps = {}) {
   const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -80,8 +84,17 @@ export function Topbar() {
       </div>
 
       {/* Center: Global Search */}
-      <div style={{ flex: 1, maxWidth: "420px", margin: "0 20px" }}>
-        <SearchBar placeholder="Search skills, opportunities, resources, evidence..." shortcut="⌘K" />
+      <div
+        style={{ flex: 1, maxWidth: "420px", margin: "0 20px", cursor: "pointer" }}
+        onClick={onOpenCommandPalette}
+      >
+        <SearchBar
+          placeholder="Search skills, opportunities, resources, evidence..."
+          shortcut="⌘K"
+          readOnly
+          style={{ cursor: "pointer" }}
+          onClick={onOpenCommandPalette}
+        />
       </div>
 
       {/* Right: Notifications & Profile Menu */}

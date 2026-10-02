@@ -1,10 +1,26 @@
 "use client";
 
-import React from "react";
-import { Smartphone, Monitor, Download, ExternalLink } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Smartphone, Monitor, Download, ArrowRight, Eye } from "lucide-react";
 import { Button } from "./ui/Button";
 
 export function MobileGate() {
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    const isDismissed = sessionStorage.getItem("jobpilot_mobile_gate_dismissed") === "true";
+    if (isDismissed) {
+      setDismissed(true);
+    }
+  }, []);
+
+  const handleDismiss = () => {
+    sessionStorage.setItem("jobpilot_mobile_gate_dismissed", "true");
+    setDismissed(true);
+  };
+
+  if (dismissed) return null;
+
   return (
     <div className="mobile-gate-screen">
       <div
@@ -65,11 +81,11 @@ export function MobileGate() {
         </div>
 
         <h2 style={{ fontSize: "20px", fontWeight: 800, marginBottom: "8px", color: "#f8fafc" }}>
-          Use the JobPilot Mobile App
+          Optimized for Desktop Workstations
         </h2>
 
         <p style={{ fontSize: "14px", color: "var(--text-sub)", lineHeight: 1.55, marginBottom: "20px" }}>
-          The desktop workspace is optimized for screens <strong>1000px and wider</strong>. For mobile devices, please open on a desktop computer or use our mobile app.
+          JobPilot&apos;s career intelligence workspace is built for multi-column comparison on screens <strong>1000px and wider</strong>.
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "18px" }}>
@@ -77,9 +93,10 @@ export function MobileGate() {
             variant="primary"
             size="md"
             style={{ width: "100%", justifyContent: "center" }}
-            icon={<Download size={15} />}
+            icon={<Eye size={15} />}
+            onClick={handleDismiss}
           >
-            Download iOS App
+            Continue to Web Workspace
           </Button>
 
           <Button
@@ -88,15 +105,16 @@ export function MobileGate() {
             style={{ width: "100%", justifyContent: "center" }}
             icon={<Download size={15} />}
           >
-            Download Android App
+            Download Mobile App
           </Button>
         </div>
 
         <div style={{ fontSize: "12px", color: "var(--text-dim)", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
           <Monitor size={14} />
-          <span>Requires 1000px+ display width</span>
+          <span>Desktop recommended • Tap above to preview</span>
         </div>
       </div>
     </div>
   );
 }
+

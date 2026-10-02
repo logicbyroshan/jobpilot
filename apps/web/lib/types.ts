@@ -74,6 +74,7 @@ export interface CareerGoal {
   target_seniority?: string;
   target_locations?: string[];
   target_salary_min?: number;
+  target_salary_range?: string;
   workplace_preference?: "REMOTE" | "HYBRID" | "ONSITE" | string;
   created_at?: string;
 }
