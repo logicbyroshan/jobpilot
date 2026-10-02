@@ -23,6 +23,7 @@ import {
   Search,
   Filter,
   Check,
+  Share2,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { LivingPortfolioResponse, CategorizedSkillItem } from "@/lib/types";
@@ -30,31 +31,20 @@ import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { Card } from "../components/ui/Card";
 import { useToast } from "@/lib/toast-context";
-import { Share2, Copy } from "lucide-react";
 
 export default function LivingPortfolioPage() {
   const { showToast } = useToast();
   const [portfolio, setPortfolio] = useState<LivingPortfolioResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"portfolio" | "narrative" | "skills" | "work" | "sources">("portfolio");
-  const [selectedSkill, setSelectedSkill] = useState<CategorizedSkillItem | null>(null);
+  const [activeTab, setActiveTab] = useState<"overview" | "skills" | "experience" | "projects" | "sources">("overview");
   const [skillCategoryFilter, setSkillCategoryFilter] = useState<string>("ALL");
+  const [skillSearchQuery, setSkillSearchQuery] = useState<string>("");
 
   useEffect(() => {
     async function loadPortfolio() {
       try {
         const data = await api.getLivingPortfolio();
         setPortfolio(data);
-        const initialList = Array.isArray(data.skills)
-          ? data.skills
-          : Array.isArray(data.categorized_skills)
-          ? data.categorized_skills
-          : data.categorized_skills && typeof data.categorized_skills === "object"
-          ? Object.values(data.categorized_skills).flat()
-          : [];
-        if (initialList.length > 0) {
-          setSelectedSkill(initialList[0] as any);
-        }
       } catch (err) {
         console.error("Failed to load living portfolio:", err);
       } finally {
@@ -67,33 +57,32 @@ export default function LivingPortfolioPage() {
   if (loading || !portfolio) {
     return (
       <div style={{ padding: "40px 0", textAlign: "center", color: "var(--text-sub)" }}>
-        <p>Loading your Living Professional Portfolio...</p>
+        <p>Loading your Profile & Skills Portfolio...</p>
       </div>
     );
   }
 
   const hero = {
     full_name: portfolio.hero?.full_name || "Alex Chen",
-    headline: portfolio.hero?.headline || "Staff Distributed Systems & Infrastructure Architect",
+    headline: portfolio.hero?.headline || "Senior Backend & Distributed Systems Engineer",
     primary_domains: Array.isArray(portfolio.hero?.primary_domains) ? portfolio.hero.primary_domains : ["Distributed Systems", "Cloud Infrastructure"],
-    seniority_level: portfolio.hero?.seniority_level || "Staff / Principal (L6/L7)",
+    seniority_level: portfolio.hero?.seniority_level || "Staff / Principal",
     location: portfolio.hero?.location || "San Francisco, CA (Remote)",
     profile_completeness_pct: portfolio.hero?.profile_completeness_pct || 94.0,
     confidence: {
       score: portfolio.hero?.confidence?.score ?? 0.94,
-      label: portfolio.hero?.confidence?.label || "High confidence (Verified)",
+      label: portfolio.hero?.confidence?.label || "Verified",
       verified_sources_count: portfolio.hero?.confidence?.verified_sources_count ?? 4,
-      unverified_claims_count: portfolio.hero?.confidence?.unverified_claims_count ?? 0,
     },
-    ai_summary: portfolio.hero?.ai_summary || "High-throughput systems architect specialized in distributed consensus and low-latency storage.",
+    ai_summary: portfolio.hero?.ai_summary || "High-throughput systems architect specialized in distributed consensus, low-latency storage, and concurrent backend services.",
   };
 
   const about = {
     how_jobpilot_sees_you: portfolio.about?.how_jobpilot_sees_you || "A top 2% systems engineer with verified evidence spanning production Raft consensus engines and high-concurrency Go services.",
     career_narrative: portfolio.about?.career_narrative || "Transitioning to Principal Infrastructure Architect at Tier-1 laboratories.",
     ideal_next_role: portfolio.about?.ideal_next_role || "Staff / Principal Distributed Systems Architect",
-    target_salary_range: portfolio.about?.target_salary_range || "$220k – $320k + Equity",
-    workplace_preference: portfolio.about?.workplace_preference || "Remote / Hybrid (US & Global)",
+    target_salary_range: portfolio.about?.target_salary_range || "$240k - $320k + Equity",
+    workplace_preference: portfolio.about?.workplace_preference || "Remote / Hybrid",
   };
 
   const experiences = (portfolio.experiences || []).map((exp: any) => ({
@@ -169,31 +158,36 @@ export default function LivingPortfolioPage() {
     item_count_label: src.item_count_label || `${src.items_ingested_count || 12} items synced`,
     last_synced: src.last_synced || "Today",
   }));
+
   const categories = ["ALL", ...Array.from(new Set(skills.map((s) => s.category).filter(Boolean)))];
-  const filteredSkills = skillCategoryFilter === "ALL" ? skills : skills.filter((s) => s.category === skillCategoryFilter);
+  const filteredSkills = skills.filter((s) => {
+    const matchesCategory = skillCategoryFilter === "ALL" || s.category === skillCategoryFilter;
+    const matchesSearch = !skillSearchQuery || s.name.toLowerCase().includes(skillSearchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
-    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
-      {/* Portfolio Top Bar */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
+    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+      {/* 1. Header with Title and Action Buttons */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">Skills & Portfolio</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Verified Experience</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+            <Badge variant="brand">Skills & Profile</Badge>
+            <Badge variant="success" dot>Verified Profile</Badge>
           </div>
-          <h1 style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.03em" }}>
-            Skills & Living Portfolio
+          <h1 style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "-0.025em" }}>
+            Skills & Profile
           </h1>
-          <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
-            Your verified work history, technical skills, and projects built from your connected accounts.
+          <p style={{ color: "var(--text-sub)", fontSize: "13px", marginTop: "3px" }}>
+            Verified technical competencies, production work history, and architecture evidence.
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           <Button
             variant="secondary"
-            size="md"
-            icon={<Share2 size={14} color="var(--accent-cyan)" />}
+            size="sm"
+            icon={<Share2 size={13} color="var(--accent-cyan)" />}
             onClick={() => {
               if (typeof window !== "undefined") {
                 navigator.clipboard?.writeText(window.location.href);
@@ -201,129 +195,118 @@ export default function LivingPortfolioPage() {
               }
             }}
           >
-            Share Portfolio
+            Share
           </Button>
           <Link href="/sources" prefetch={true} style={{ textDecoration: "none" }}>
-            <Button variant="secondary" size="md">
+            <Button variant="secondary" size="sm">
               Data Sources ({connected_sources.length})
             </Button>
           </Link>
           <Link href="/prove" prefetch={true} style={{ textDecoration: "none" }}>
-            <Button variant="primary" size="md" icon={<Award size={15} />}>
+            <Button variant="primary" size="sm" icon={<Award size={14} />}>
               Take Assessment
             </Button>
           </Link>
         </div>
       </div>
 
-      {/* Hero Section */}
-      <Card
+      {/* 2. Compact Profile Hero Banner */}
+      <div
+        className="ui-card"
         style={{
-          background: "linear-gradient(135deg, rgba(230,57,70,0.05) 0%, rgba(20,22,30,0.95) 100%)",
-          borderColor: "rgba(230,57,70,0.2)",
-          padding: "32px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "24px",
+          background: "linear-gradient(135deg, rgba(225,29,72,0.06) 0%, rgba(12,18,32,0.98) 100%)",
+          borderColor: "rgba(225,29,72,0.22)",
+          padding: "16px 20px",
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
-          <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "14px" }}>
+          <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
             <div
               style={{
-                width: "72px",
-                height: "72px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, var(--brand) 0%, #B82E3B 100%)",
+                width: "44px",
+                height: "44px",
+                borderRadius: "8px",
+                background: "var(--accent-primary)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "26px",
+                fontSize: "16px",
                 fontWeight: 800,
-                color: "#fff",
-                boxShadow: "0 8px 24px rgba(230,57,70,0.3)",
+                color: "#ffffff",
+                flexShrink: 0,
               }}
             >
               {hero.full_name?.split(" ").map((n: string) => n[0]).join("") || "AC"}
             </div>
+
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-                <h2 style={{ fontSize: "24px", fontWeight: 800, letterSpacing: "-0.02em" }}>{hero.full_name}</h2>
-                <Badge variant="cyan">{hero.seniority_level || "Staff Engineer"}</Badge>
-                <Badge variant="success" icon={<ShieldCheck size={13} />}>{hero.confidence?.label || "High confidence (Verified)"}</Badge>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                <h2 style={{ fontSize: "16px", fontWeight: 800 }}>{hero.full_name}</h2>
+                <Badge variant="cyan" size="sm">{hero.seniority_level}</Badge>
+                <Badge variant="success" size="sm" icon={<ShieldCheck size={12} />}>{hero.confidence.label}</Badge>
               </div>
-              <p style={{ fontSize: "16px", color: "var(--text-sub)", marginTop: "4px", fontWeight: 500 }}>
-                {hero.headline}
+              <p style={{ fontSize: "12.5px", color: "var(--text-sub)", marginTop: "2px" }}>
+                {hero.headline} • {hero.location}
               </p>
-              <div style={{ display: "flex", alignItems: "center", gap: "16px", marginTop: "8px", fontSize: "13px", color: "var(--text-muted)" }}>
-                <span>📍 {hero.location || "San Francisco, CA"}</span>
-                <span>•</span>
-                <span>⚡ {hero.confidence?.verified_sources_count ?? 4} Verified Sources</span>
-                <span>•</span>
-                <span>🎯 Top 2% Systems Alignment</span>
-              </div>
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
-            <div style={{ fontSize: "12px", color: "var(--text-sub)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-              Profile Completeness
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontSize: "11px", color: "var(--text-dim)", textTransform: "uppercase", fontWeight: 700 }}>
+                Completeness
+              </div>
+              <div style={{ fontSize: "18px", fontWeight: 800, color: "var(--accent-primary)" }}>
+                {hero.profile_completeness_pct}%
+              </div>
             </div>
-            <div style={{ fontSize: "28px", fontWeight: 800, color: "var(--brand)" }}>
-              {hero.profile_completeness_pct}%
-            </div>
-            <div style={{ width: "160px", height: "6px", background: "rgba(255,255,255,0.08)", borderRadius: "999px", overflow: "hidden" }}>
-              <div style={{ width: `${hero.profile_completeness_pct}%`, height: "100%", background: "var(--brand)", borderRadius: "999px" }} />
+            <div style={{ width: "80px", height: "6px", background: "rgba(255,255,255,0.08)", borderRadius: "3px", overflow: "hidden" }}>
+              <div style={{ width: `${hero.profile_completeness_pct}%`, height: "100%", background: "var(--accent-primary)" }} />
             </div>
           </div>
         </div>
 
-        {/* AI Summary Box */}
+        {/* AI Summary Sub-box */}
         <div
           style={{
-            background: "rgba(255,255,255,0.03)",
+            marginTop: "12px",
+            padding: "8px 12px",
+            borderRadius: "6px",
+            background: "rgba(255, 255, 255, 0.02)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: "10px",
-            padding: "16px 20px",
             display: "flex",
-            gap: "14px",
-            alignItems: "flex-start",
+            alignItems: "center",
+            gap: "8px",
           }}
         >
-          <Sparkles size={20} style={{ color: "var(--brand)", flexShrink: 0, marginTop: "2px" }} />
-          <div>
-            <div style={{ fontSize: "12px", fontWeight: 700, color: "var(--brand)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>
-              AI Intelligence Executive Summary
-            </div>
-            <p style={{ fontSize: "14px", color: "var(--text-main)", lineHeight: 1.6 }}>
-              {hero.ai_summary}
-            </p>
-          </div>
+          <Sparkles size={14} color="var(--accent-cyan)" style={{ flexShrink: 0 }} />
+          <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: 0 }}>
+            {hero.ai_summary}
+          </p>
         </div>
-      </Card>
+      </div>
 
-      {/* Navigation Tabs */}
-      <div style={{ display: "flex", gap: "8px", borderBottom: "1px solid var(--border-subtle)", paddingBottom: "12px" }}>
+      {/* 3. Navigation Tab Bar */}
+      <div style={{ display: "flex", gap: "6px", borderBottom: "1px solid var(--border-subtle)", paddingBottom: "8px", overflowX: "auto" }}>
         {[
-          { key: "portfolio", label: "Full Portfolio Overview" },
-          { key: "narrative", label: "How JobPilot Sees You" },
-          { key: "skills", label: `Categorized Skills (${skills.length})` },
-          { key: "work", label: `Selected Work & Architecture (${projects.length})` },
-          { key: "sources", label: `Connected Sources (${connected_sources.length})` },
+          { key: "overview", label: "Overview" },
+          { key: "skills", label: `Skills Matrix (${skills.length})` },
+          { key: "experience", label: `Experience (${experiences.length})` },
+          { key: "projects", label: `Projects (${projects.length})` },
+          { key: "sources", label: `Sources (${connected_sources.length})` },
         ].map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as any)}
             style={{
-              padding: "8px 16px",
-              borderRadius: "8px",
-              fontSize: "14px",
-              fontWeight: 600,
+              padding: "6px 12px",
+              borderRadius: "6px",
+              fontSize: "13px",
+              fontWeight: activeTab === tab.key ? 700 : 500,
               cursor: "pointer",
-              border: "none",
+              border: activeTab === tab.key ? "1px solid var(--border-subtle)" : "1px solid transparent",
               background: activeTab === tab.key ? "var(--bg-elevated)" : "transparent",
-              color: activeTab === tab.key ? "var(--text-main)" : "var(--text-sub)",
-              boxShadow: activeTab === tab.key ? "0 2px 8px rgba(0,0,0,0.2)" : "none",
+              color: activeTab === tab.key ? "#ffffff" : "var(--text-sub)",
               transition: "all 0.15s ease",
             }}
           >
@@ -332,199 +315,128 @@ export default function LivingPortfolioPage() {
         ))}
       </div>
 
-      {/* TAB CONTENT: FULL PORTFOLIO / COMBINED */}
-      {(activeTab === "portfolio" || activeTab === "narrative") && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
-          {/* About Narrative */}
-          <Card style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Sparkles size={18} style={{ color: "var(--brand)" }} />
-              <h3 style={{ fontSize: "16px", fontWeight: 700 }}>How JobPilot Sees You</h3>
-            </div>
-            <p style={{ fontSize: "14px", color: "var(--text-sub)", lineHeight: 1.65 }}>
-              {about.how_jobpilot_sees_you}
-            </p>
-            <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: "14px", display: "flex", flexDirection: "column", gap: "10px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
-                <span style={{ color: "var(--text-sub)" }}>Career Narrative:</span>
-                <span style={{ fontWeight: 600, color: "var(--text-main)", maxWidth: "60%", textAlign: "right" }}>{about.career_narrative}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
-                <span style={{ color: "var(--text-sub)" }}>Ideal Next Role:</span>
-                <span style={{ fontWeight: 600, color: "var(--text-main)" }}>{about.ideal_next_role}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
-                <span style={{ color: "var(--text-sub)" }}>Target Compensation:</span>
-                <span style={{ fontWeight: 600, color: "var(--brand)" }}>{about.target_salary_range}</span>
-              </div>
-            </div>
-          </Card>
+      {/* 4. TAB CONTENTS */}
 
-          {/* Quick Skills Summary */}
-          <Card style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Award size={18} style={{ color: "var(--brand)" }} />
-                <h3 style={{ fontSize: "16px", fontWeight: 700 }}>Core Competency Highlights</h3>
+      {/* TAB 1: OVERVIEW */}
+      {activeTab === "overview" && (
+        <div className="grid-split-65-35">
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            {/* Career Narrative */}
+            <div className="ui-card">
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+                <Sparkles size={15} color="var(--accent-primary)" />
+                <h3 style={{ fontSize: "14.5px", fontWeight: 700 }}>Career Positioning</h3>
               </div>
-              <Link href="/prove" prefetch={true} style={{ textDecoration: "none", fontSize: "13px", color: "var(--brand)", fontWeight: 600 }}>
+              <p style={{ fontSize: "13px", color: "var(--text-sub)", lineHeight: 1.55 }}>
+                {about.how_jobpilot_sees_you}
+              </p>
+              <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: "12px", marginTop: "12px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", fontSize: "12.5px" }}>
+                <div>
+                  <span style={{ color: "var(--text-dim)" }}>Ideal Next Role:</span>
+                  <div style={{ fontWeight: 600, color: "var(--text-main)", marginTop: "1px" }}>{about.ideal_next_role}</div>
+                </div>
+                <div>
+                  <span style={{ color: "var(--text-dim)" }}>Target Salary:</span>
+                  <div style={{ fontWeight: 600, color: "var(--accent-emerald)", marginTop: "1px" }}>{about.target_salary_range}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Experience Snapshot */}
+            <div className="ui-card">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                <h3 style={{ fontSize: "14.5px", fontWeight: 700 }}>Recent Experience</h3>
+                <button
+                  onClick={() => setActiveTab("experience")}
+                  style={{ background: "transparent", border: "none", color: "var(--accent-cyan)", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}
+                >
+                  View All ({experiences.length}) →
+                </button>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                {experiences.slice(0, 2).map((exp: any, idx: number) => (
+                  <div
+                    key={idx}
+                    style={{
+                      padding: "10px 12px",
+                      borderRadius: "6px",
+                      background: "var(--bg-elevated)",
+                      border: "1px solid var(--border-subtle)",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <div style={{ fontSize: "13.5px", fontWeight: 700, color: "var(--text-main)" }}>{exp.title}</div>
+                        <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{exp.company} • {exp.period}</div>
+                      </div>
+                      <Badge variant="success" size="sm">Verified</Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Skills Snapshot */}
+          <div className="ui-card" style={{ padding: "16px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <Award size={15} color="var(--accent-purple)" />
+                <h3 style={{ fontSize: "14px", fontWeight: 700 }}>Verified Skills</h3>
+              </div>
+              <Link href="/prove" prefetch={true} style={{ fontSize: "12px", color: "var(--accent-purple)", fontWeight: 600, textDecoration: "none" }}>
                 Prove Skills →
               </Link>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {skills.map((skill) => (
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {skills.slice(0, 5).map((skill) => (
                 <div
                   key={skill.name}
-                  onClick={() => {
-                    setSelectedSkill(skill);
-                    setActiveTab("skills");
-                  }}
                   style={{
-                    padding: "12px 14px",
-                    borderRadius: "8px",
-                    background: "rgba(255,255,255,0.02)",
+                    padding: "8px 10px",
+                    borderRadius: "4px",
+                    background: "var(--bg-elevated)",
                     border: "1px solid var(--border-subtle)",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    cursor: "pointer",
                   }}
                 >
                   <div>
-                    <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-main)" }}>{skill.name}</div>
-                    <div style={{ fontSize: "12px", color: "var(--text-sub)", marginTop: "2px" }}>{skill.category} • {skill.evidence_count} evidence items</div>
+                    <div style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-main)" }}>{skill.name}</div>
+                    <div style={{ fontSize: "11px", color: "var(--text-dim)" }}>{skill.category}</div>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <Badge variant={skill.capability.score >= 9 ? "brand" : skill.capability.score >= 7 ? "cyan" : "neutral"}>
-                      {skill.capability.label} ({skill.capability.score})
-                    </Badge>
-                  </div>
+                  <Badge variant={skill.capability.score >= 9 ? "brand" : skill.capability.score >= 7 ? "cyan" : "neutral"} size="sm">
+                    {skill.capability.label} ({skill.capability.score})
+                  </Badge>
                 </div>
               ))}
             </div>
-          </Card>
-        </div>
-      )}
-
-      {/* TAB CONTENT: EXPERIENCE TIMELINE */}
-      {(activeTab === "portfolio" || activeTab === "work") && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h3 style={{ fontSize: "18px", fontWeight: 700, letterSpacing: "-0.01em" }}>
-              Experience Timeline & Proven Impact
-            </h3>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>
-              Backed by verified patents, production deployments, and employment records
-            </span>
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {experiences.map((exp: any, idx: number) => (
-              <Card key={idx} style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" }}>
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <h4 style={{ fontSize: "18px", fontWeight: 700 }}>{exp.title}</h4>
-                      <Badge variant="neutral">@ {exp.company}</Badge>
-                    </div>
-                    <div style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
-                      {exp.period} • {exp.location}
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                    {exp.verified_evidence_badges.map((badge: string, bIdx: number) => (
-                      <Badge key={bIdx} variant="success" icon={<CheckCircle2 size={12} />}>
-                        {badge}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px", color: "var(--text-sub)", fontSize: "14px", lineHeight: 1.6 }}>
-                  {exp.impact_bullets.map((bullet: string, bIdx: number) => (
-                    <li key={bIdx}>{bullet}</li>
-                  ))}
-                </ul>
-
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", paddingTop: "8px", borderTop: "1px solid var(--border-subtle)" }}>
-                  {exp.skills_used.map((skill: string, sIdx: number) => (
-                    <span key={sIdx} style={{ fontSize: "12px", padding: "3px 10px", borderRadius: "6px", background: "rgba(255,255,255,0.04)", color: "var(--text-sub)", border: "1px solid var(--border-subtle)" }}>
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </Card>
-            ))}
           </div>
         </div>
       )}
 
-      {/* TAB CONTENT: SELECTED WORK GALLERY */}
-      {(activeTab === "portfolio" || activeTab === "work") && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginTop: "12px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h3 style={{ fontSize: "18px", fontWeight: 700, letterSpacing: "-0.01em" }}>
-              Selected Work & Architecture Gallery
-            </h3>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>
-              Real production repositories and open-source benchmarks
-            </span>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-            {projects.map((proj: any, pIdx: number) => (
-              <Card key={pIdx} style={{ padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "16px" }}>
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
-                    <h4 style={{ fontSize: "17px", fontWeight: 700 }}>{proj.name}</h4>
-                    <Badge variant="brand">{proj.type}</Badge>
-                  </div>
-                  <p style={{ fontSize: "14px", color: "var(--text-sub)", marginTop: "8px", lineHeight: 1.6 }}>
-                    {proj.description}
-                  </p>
-                  <div style={{ marginTop: "12px", padding: "10px 14px", background: "rgba(255,255,255,0.02)", borderRadius: "8px", border: "1px solid var(--border-subtle)", fontSize: "13px" }}>
-                    <span style={{ color: "var(--text-muted)" }}>Architecture: </span>
-                    <span style={{ color: "var(--text-main)", fontWeight: 500 }}>{proj.architecture_summary}</span>
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px", borderTop: "1px solid var(--border-subtle)", paddingTop: "14px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px" }}>
-                    <Badge variant="success" icon={<CheckCircle2 size={12} />}>{proj.verified_evidence_badge}</Badge>
-                    <span style={{ color: "var(--brand)", fontWeight: 600 }}>{proj.metrics}</span>
-                  </div>
-                  {proj.github_url && (
-                    <a href={proj.github_url} target="_blank" rel="noreferrer" style={{ textDecoration: "none", color: "var(--text-sub)", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <Github size={14} /> View Verified Repository <ExternalLink size={12} />
-                    </a>
-                  )}
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* TAB CONTENT: CATEGORIZED SKILLS & INTERACTIVE DRAWER */}
+      {/* TAB 2: SKILLS MATRIX */}
       {activeTab === "skills" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: "24px", alignItems: "flex-start" }}>
-          {/* Skill List & Filters */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          {/* Filter Bar */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSkillCategoryFilter(cat)}
                   style={{
-                    padding: "6px 12px",
-                    borderRadius: "6px",
+                    padding: "4px 10px",
+                    borderRadius: "4px",
                     fontSize: "12px",
-                    fontWeight: 600,
+                    fontWeight: skillCategoryFilter === cat ? 700 : 500,
                     cursor: "pointer",
-                    border: "1px solid",
-                    borderColor: skillCategoryFilter === cat ? "var(--brand)" : "var(--border-subtle)",
-                    background: skillCategoryFilter === cat ? "rgba(230,57,70,0.1)" : "transparent",
-                    color: skillCategoryFilter === cat ? "var(--brand)" : "var(--text-sub)",
+                    border: "1px solid var(--border-subtle)",
+                    background: skillCategoryFilter === cat ? "var(--accent-primary)" : "var(--bg-elevated)",
+                    color: skillCategoryFilter === cat ? "#ffffff" : "var(--text-sub)",
                   }}
                 >
                   {cat}
@@ -532,125 +444,139 @@ export default function LivingPortfolioPage() {
               ))}
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {filteredSkills.map((skill) => {
-                const isSelected = selectedSkill?.name === skill.name;
-                return (
-                  <Card
-                    key={skill.name}
-                    onClick={() => setSelectedSkill(skill)}
-                    style={{
-                      padding: "16px 20px",
-                      cursor: "pointer",
-                      borderColor: isSelected ? "var(--brand)" : "var(--border-subtle)",
-                      background: isSelected ? "rgba(230,57,70,0.04)" : "var(--bg-surface)",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      transition: "all 0.15s ease",
-                    }}
-                  >
-                    <div>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <h4 style={{ fontSize: "15px", fontWeight: 700 }}>{skill.name}</h4>
-                        <Badge variant={skill.status === "VERIFIED" ? "success" : "warning"}>
-                          {skill.status === "VERIFIED" ? "Verified" : "Needs Evidence"}
-                        </Badge>
-                      </div>
-                      <div style={{ fontSize: "13px", color: "var(--text-sub)", marginTop: "4px" }}>
-                        {skill.category} • Demanded by {skill.target_demand_pct || 85}% of target roles
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <Badge variant={(skill.capability?.score ?? 8) >= 9 ? "brand" : (skill.capability?.score ?? 8) >= 7 ? "cyan" : "neutral"}>
-                        {skill.capability?.label || "Advanced"} ({skill.capability?.score ?? 8.5})
-                      </Badge>
-                      <ArrowRight size={16} style={{ color: isSelected ? "var(--brand)" : "var(--text-muted)" }} />
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
+            <input
+              type="text"
+              placeholder="Search skills..."
+              value={skillSearchQuery}
+              onChange={(e) => setSkillSearchQuery(e.target.value)}
+              style={{
+                padding: "6px 10px",
+                borderRadius: "4px",
+                background: "var(--bg-input)",
+                border: "1px solid var(--border-subtle)",
+                color: "var(--text-main)",
+                fontSize: "12.5px",
+                width: "180px",
+              }}
+            />
           </div>
 
-          {/* Interactive Skill Detail Pane */}
-          {selectedSkill && (
-            <Card style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "20px", position: "sticky", top: "90px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div>
-                  <Badge variant="brand">{selectedSkill.category || "Engineering"}</Badge>
-                  <h3 style={{ fontSize: "20px", fontWeight: 800, marginTop: "8px" }}>{selectedSkill.name}</h3>
+          {/* Skills Grid */}
+          <div className="grid-2">
+            {filteredSkills.map((skill) => (
+              <div
+                key={skill.name}
+                className="ui-card"
+                style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "8px" }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div>
+                    <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-main)" }}>{skill.name}</span>
+                    <div style={{ fontSize: "11.5px", color: "var(--text-dim)", marginTop: "1px" }}>{skill.category} • {skill.evidence_count} verified sources</div>
+                  </div>
+                  <Badge variant={skill.capability.score >= 9 ? "brand" : skill.capability.score >= 7 ? "cyan" : "neutral"} size="sm">
+                    {skill.capability.label} ({skill.capability.score}/10)
+                  </Badge>
                 </div>
-                <Badge variant={selectedSkill.status === "VERIFIED" ? "success" : "warning"}>
-                  {selectedSkill.status || "VERIFIED"}
-                </Badge>
-              </div>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px", background: "rgba(255,255,255,0.02)", padding: "16px", borderRadius: "10px", border: "1px solid var(--border-subtle)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
-                  <span style={{ color: "var(--text-sub)" }}>What JobPilot Believes:</span>
-                  <span style={{ fontWeight: 700, color: "var(--brand)" }}>
-                    {selectedSkill.capability?.label || "Advanced"} ({selectedSkill.capability?.score ?? 8.5}/10)
-                  </span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
-                  <span style={{ color: "var(--text-sub)" }}>Verification Confidence:</span>
-                  <span style={{ fontWeight: 700, color: "var(--text-main)" }}>
-                    {Math.round((selectedSkill.confidence?.score ?? 0.9) * 100)}% ({selectedSkill.confidence?.verified_sources_count ?? 3} sources)
-                  </span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
-                  <span style={{ color: "var(--text-sub)" }}>Target Role Overlap:</span>
-                  <span style={{ fontWeight: 700, color: "var(--text-main)" }}>
-                    {selectedSkill.target_roles_requiring_count || 14} target positions
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <div style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase", color: "var(--text-muted)", letterSpacing: "0.05em", marginBottom: "6px" }}>
-                  Why It Matters For Your Goal
-                </div>
-                <p style={{ fontSize: "14px", color: "var(--text-sub)", lineHeight: 1.6 }}>
-                  {selectedSkill.why_it_matters}
+                <p style={{ fontSize: "12px", color: "var(--text-muted)", lineHeight: 1.4 }}>
+                  {skill.why_it_matters}
                 </p>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--border-subtle)", paddingTop: "8px", fontSize: "11.5px" }}>
+                  <span style={{ color: "var(--accent-emerald)" }}>{skill.confidence.label}</span>
+                  <Link href="/prove" prefetch={true} style={{ color: "var(--accent-cyan)", textDecoration: "none", fontWeight: 600 }}>
+                    Take Test →
+                  </Link>
+                </div>
               </div>
-
-              <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
-                <Link href="/prove" prefetch={true} style={{ textDecoration: "none" }}>
-                  <Button variant="primary" fullWidth icon={<Award size={16} />}>
-                    Prove {selectedSkill.name} in Stage 5
-                  </Button>
-                </Link>
-                <Link href="/improve" prefetch={true} style={{ textDecoration: "none" }}>
-                  <Button variant="secondary" fullWidth>
-                    Add to Improvement Mission
-                  </Button>
-                </Link>
-              </div>
-            </Card>
-          )}
+            ))}
+          </div>
         </div>
       )}
 
-      {/* TAB CONTENT: CONNECTED SOURCES */}
-      {activeTab === "sources" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-          {connected_sources.map((src: any) => (
-            <Card key={src.name} style={{ padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                <div style={{ width: "42px", height: "42px", borderRadius: "8px", background: "rgba(255,255,255,0.04)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {src.icon === "github" ? <Github size={20} /> : src.icon === "linkedin" ? <Linkedin size={20} /> : <FileText size={20} />}
-                </div>
+      {/* TAB 3: EXPERIENCE */}
+      {activeTab === "experience" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          {experiences.map((exp: any, idx: number) => (
+            <div key={idx} className="ui-card" style={{ padding: "16px 20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "10px" }}>
                 <div>
-                  <h4 style={{ fontSize: "15px", fontWeight: 700 }}>{src.name}</h4>
-                  <div style={{ fontSize: "13px", color: "var(--text-sub)", marginTop: "2px" }}>
-                    {src.item_count_label} • Synced {src.last_synced}
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <h3 style={{ fontSize: "15px", fontWeight: 700 }}>{exp.title}</h3>
+                    <Badge variant="neutral" size="sm">@ {exp.company}</Badge>
+                  </div>
+                  <div style={{ fontSize: "12px", color: "var(--text-dim)", marginTop: "2px" }}>
+                    {exp.period} • {exp.location}
                   </div>
                 </div>
+                <Badge variant="success" size="sm" icon={<CheckCircle2 size={12} />}>Verified Employment</Badge>
               </div>
-              <Badge variant="success" icon={<CheckCircle2 size={12} />}>{src.status}</Badge>
-            </Card>
+
+              <ul style={{ margin: "10px 0 0 16px", color: "var(--text-sub)", fontSize: "12.5px", lineHeight: 1.5 }}>
+                {exp.impact_bullets.map((bullet: string, bIdx: number) => (
+                  <li key={bIdx}>{bullet}</li>
+                ))}
+              </ul>
+
+              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "10px", paddingTop: "8px", borderTop: "1px solid var(--border-subtle)" }}>
+                {exp.skills_used.map((skill: string, sIdx: number) => (
+                  <span key={sIdx} style={{ fontSize: "11px", padding: "2px 8px", borderRadius: "4px", background: "rgba(255,255,255,0.04)", color: "var(--text-muted)" }}>
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* TAB 4: PROJECTS */}
+      {activeTab === "projects" && (
+        <div className="grid-2">
+          {projects.map((proj: any, pIdx: number) => (
+            <div key={pIdx} className="ui-card" style={{ padding: "16px", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }}>
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <h3 style={{ fontSize: "14.5px", fontWeight: 700 }}>{proj.name}</h3>
+                  <Badge variant="brand" size="sm">{proj.type}</Badge>
+                </div>
+                <p style={{ fontSize: "12.5px", color: "var(--text-sub)", marginTop: "6px", lineHeight: 1.45 }}>
+                  {proj.description}
+                </p>
+                <div style={{ marginTop: "8px", padding: "6px 10px", background: "rgba(255,255,255,0.02)", borderRadius: "4px", fontSize: "11.5px" }}>
+                  <span style={{ color: "var(--text-dim)" }}>Architecture: </span>
+                  <span style={{ color: "var(--text-main)" }}>{proj.architecture_summary}</span>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--border-subtle)", paddingTop: "8px" }}>
+                <Badge variant="success" size="sm" icon={<CheckCircle2 size={11} />}>{proj.verified_evidence_badge}</Badge>
+                {proj.github_url && (
+                  <a href={proj.github_url} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "var(--accent-cyan)", display: "flex", alignItems: "center", gap: "4px" }}>
+                    <Github size={13} /> View Repo
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* TAB 5: SOURCES */}
+      {activeTab === "sources" && (
+        <div className="grid-2">
+          {connected_sources.map((src: any, sIdx: number) => (
+            <div key={sIdx} className="ui-card" style={{ padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ width: "32px", height: "32px", borderRadius: "6px", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <FileText size={16} color="var(--accent-primary)" />
+                </div>
+                <div>
+                  <div style={{ fontSize: "13px", fontWeight: 700 }}>{src.name}</div>
+                  <div style={{ fontSize: "11.5px", color: "var(--text-dim)" }}>{src.item_count_label} • Synced {src.last_synced}</div>
+                </div>
+              </div>
+              <Badge variant="success" size="sm">Connected</Badge>
+            </div>
           ))}
         </div>
       )}

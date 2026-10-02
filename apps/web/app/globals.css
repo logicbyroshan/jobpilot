@@ -1,19 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Slate Obsidian Dark Palette (Matte, High-End SaaS) */
-  --bg-main: #070a12;
-  --bg-card: #0d1322;
-  --bg-card-hover: #121a2e;
-  --bg-elevated: #151f36;
-  --bg-input: #0a0f1c;
+  /* Slate Obsidian Dark Palette */
+  --bg-main: #070a13;
+  --bg-card: #0c1220;
+  --bg-card-hover: #111827;
+  --bg-elevated: #141c2e;
+  --bg-input: #090e1a;
 
   /* Crisp Micro-Borders */
   --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-subtle-hover: rgba(255, 255, 255, 0.16);
   --border-active: rgba(225, 29, 72, 0.4);
   --border-focus: #e11d48;
 
-  /* Tasteful JobPilot Crimson Brand Accent */
+  /* JobPilot Crimson Brand Accent */
   --accent-primary: #e11d48;
   --accent-primary-hover: #be123c;
   --accent-secondary: #f43f5e;
@@ -25,7 +26,7 @@
   --accent-purple: #a855f7;
   --accent-rose: #f43f5e;
 
-  /* Aliases for universal compatibility */
+  /* Universal Aliases */
   --brand: var(--accent-primary);
   --brand-hover: var(--accent-primary-hover);
   --cyan: var(--accent-cyan);
@@ -48,12 +49,12 @@
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Modern Low Border-Radii (Clean, Boxy-Minimalist Look) */
-  --radius-xs: 3px;
-  --radius-sm: 5px;
-  --radius-md: 7px;
-  --radius-lg: 10px;
-  --radius-full: 4px;
+  /* Modern Low Border-Radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
 
   /* Z-Index Hierarchy */
   --z-base: 1;
@@ -85,8 +86,8 @@ html, body {
   background-color: var(--bg-main);
   color: var(--text-main);
   font-family: var(--font-sans);
-  font-size: 14.5px;
-  line-height: 1.55;
+  font-size: 13.5px;
+  line-height: 1.5;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -113,7 +114,7 @@ html, body {
 /* Typography Hierarchy */
 h1 {
   color: var(--text-main);
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.025em;
   line-height: 1.25;
@@ -121,7 +122,7 @@ h1 {
 
 h2 {
   color: var(--text-main);
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.35;
@@ -129,7 +130,7 @@ h2 {
 
 h3 {
   color: var(--text-main);
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 700;
   letter-spacing: -0.015em;
   line-height: 1.4;
@@ -137,15 +138,15 @@ h3 {
 
 h4, h5, h6 {
   color: var(--text-main);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   line-height: 1.4;
 }
 
 p {
   color: var(--text-sub);
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 a {
@@ -164,7 +165,7 @@ a {
 }
 
 .sidebar {
-  width: 255px;
+  width: 240px;
   background: #090e1a;
   border-right: 1px solid var(--border-subtle);
   display: flex;
@@ -177,25 +178,25 @@ a {
 }
 
 .main-content {
-  margin-left: 255px;
+  margin-left: 240px;
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   min-width: 0;
-  width: calc(100% - 255px);
+  width: calc(100% - 240px);
   background-color: var(--bg-main);
 }
 
 .topbar {
-  height: 60px;
-  background: rgba(7, 10, 18, 0.85);
+  height: 54px;
+  background: rgba(7, 10, 19, 0.85);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 36px;
+  padding: 0 28px;
   position: sticky;
   top: 0;
   z-index: var(--z-topbar);
@@ -203,10 +204,11 @@ a {
 }
 
 .page-body {
-  padding: 24px 36px 48px;
+  padding: 24px 28px 48px;
   flex: 1;
   width: 100%;
-  max-width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
@@ -229,13 +231,13 @@ a {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 18px 22px;
+  padding: 18px 20px;
   position: relative;
   transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .ui-card-hover:hover {
-  border-color: rgba(255, 255, 255, 0.16);
+  border-color: var(--border-subtle-hover);
   background-color: var(--bg-card-hover);
   transform: translateY(-2px);
 }
@@ -247,7 +249,7 @@ a {
   gap: 5px;
   padding: 3px 8px;
   border-radius: var(--radius-xs);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.01em;
   white-space: nowrap;
@@ -294,11 +296,11 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  padding: 7px 14px;
+  gap: 6px;
+  padding: 6px 13px;
   border-radius: var(--radius-sm);
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: 13px;
   border: none;
   cursor: pointer;
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
@@ -333,14 +335,14 @@ a {
 }
 
 .btn-sm {
-  padding: 5px 10px;
-  font-size: 12.5px;
+  padding: 4px 9px;
+  font-size: 12px;
   border-radius: var(--radius-xs);
 }
 
 .btn-lg {
-  padding: 10px 20px;
-  font-size: 15px;
+  padding: 9px 18px;
+  font-size: 14px;
   border-radius: var(--radius-md);
 }
 
@@ -350,7 +352,7 @@ input, select, textarea {
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 13.5px;
   outline: none;
   font-family: inherit;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -412,23 +414,41 @@ input:focus, select:focus, textarea:focus {
   }
 }
 
-/* Responsive Grid */
+/* Responsive Grids & Layout Utilities */
 .grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 .grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 .grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.grid-split-65-35 {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
   gap: 18px;
+}
+
+@media (max-width: 1080px) {
+  .grid-split-65-35 {
+    grid-template-columns: 1fr;
+  }
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Default state for mobile gate */

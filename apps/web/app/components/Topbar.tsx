@@ -275,7 +275,7 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps = {}) {
                     textDecoration: "none",
                   }}
                 >
-                  Know Me (Identity Graph)
+                  Skills & Profile
                 </Link>
 
                 <Link

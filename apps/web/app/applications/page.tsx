@@ -92,25 +92,25 @@ export default function ApplicationsControlCenterPage() {
   }
 
   return (
-    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
       {/* Top Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
             <Badge variant="brand">Applications</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Submissions & Resumes</span>
+            <span style={{ fontSize: "12.5px", color: "var(--text-sub)" }}>Submissions & Resumes</span>
           </div>
-          <h1 style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.03em" }}>
+          <h1 style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "-0.025em" }}>
             Applications & Resumes
           </h1>
-          <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
+          <p style={{ color: "var(--text-sub)", fontSize: "13px", marginTop: "3px" }}>
             Track active job applications, tailored resume versions, and automated submissions.
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div style={{ display: "flex", gap: "8px" }}>
           <Link href="/outcomes" prefetch={true} style={{ textDecoration: "none" }}>
-            <Button variant="secondary" size="md">
+            <Button variant="secondary" size="sm">
               View Analytics →
             </Button>
           </Link>
@@ -118,74 +118,65 @@ export default function ApplicationsControlCenterPage() {
       </div>
 
       {/* Safety Policy & Queue Banner */}
-      <Card
+      <div
+        className="ui-card"
         style={{
-          background: "linear-gradient(135deg, rgba(230,57,70,0.06) 0%, rgba(20,22,30,0.95) 100%)",
-          borderColor: "rgba(230,57,70,0.2)",
-          padding: "24px",
+          background: "linear-gradient(135deg, rgba(225,29,72,0.06) 0%, rgba(12,18,32,0.98) 100%)",
+          borderColor: "rgba(225,29,72,0.2)",
+          padding: "16px 20px",
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "20px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <div style={{ width: "48px", height: "48px", borderRadius: "10px", background: "rgba(230,57,70,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--brand)" }}>
-              <Shield size={24} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "14px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ width: "38px", height: "38px", borderRadius: "6px", background: "rgba(225,29,72,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--brand)" }}>
+              <Shield size={20} />
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <h2 style={{ fontSize: "18px", fontWeight: 800 }}>Auto-Apply Policy: {policy?.mode || "ASSISTED"} Mode</h2>
-                <Badge variant={policy?.mode === "AUTONOMOUS" ? "brand" : "cyan"}>
+                <h2 style={{ fontSize: "15px", fontWeight: 700 }}>Auto-Apply: {policy?.mode || "ASSISTED"} Mode</h2>
+                <Badge variant={policy?.mode === "AUTONOMOUS" ? "brand" : "cyan"} size="sm">
                   {policy?.mode === "AUTONOMOUS" ? "Auto Submissions Active" : "Review Required"}
                 </Badge>
               </div>
-              <p style={{ fontSize: "13px", color: "var(--text-sub)", marginTop: "3px" }}>
+              <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
                 Daily limit: {policy?.daily_application_limit || 5}/day • Min fit: {policy?.min_match_score || 85}% • 100% verified claims.
               </p>
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            <button
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<Sliders size={13} />}
               onClick={() => handlePolicyToggle(policy?.mode === "AUTONOMOUS" ? "ASSISTED" : "AUTONOMOUS")}
-              style={{
-                padding: "8px 16px",
-                borderRadius: "8px",
-                border: "1px solid var(--border-subtle)",
-                background: "var(--bg-elevated)",
-                color: "var(--text-main)",
-                fontSize: "13px",
-                fontWeight: 600,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
             >
-              <Sliders size={14} /> Toggle Mode ({policy?.mode === "AUTONOMOUS" ? "Switch to Assisted" : "Enable Autonomous"})
-            </button>
+              {policy?.mode === "AUTONOMOUS" ? "Switch to Assisted" : "Enable Auto-Apply"}
+            </Button>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", gap: "8px", borderBottom: "1px solid var(--border-subtle)", paddingBottom: "12px" }}>
+      <div style={{ display: "flex", gap: "6px", borderBottom: "1px solid var(--border-subtle)", paddingBottom: "8px" }}>
         {[
           { key: "pipeline", label: `Application Pipeline (${applications.length})` },
-          { key: "resumes", label: `Resume Center (${resumes.length} Versions)` },
+          { key: "resumes", label: `Resume Center (${resumes.length})` },
           { key: "queue", label: `Execution Queue (${queue?.executions?.length || 0})` },
         ].map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as any)}
             style={{
-              padding: "8px 16px",
-              borderRadius: "8px",
-              fontSize: "14px",
-              fontWeight: 600,
+              padding: "6px 12px",
+              borderRadius: "6px",
+              fontSize: "13px",
+              fontWeight: activeTab === tab.key ? 700 : 500,
               cursor: "pointer",
-              border: "none",
+              border: activeTab === tab.key ? "1px solid var(--border-subtle)" : "1px solid transparent",
               background: activeTab === tab.key ? "var(--bg-elevated)" : "transparent",
-              color: activeTab === tab.key ? "var(--text-main)" : "var(--text-sub)",
-              boxShadow: activeTab === tab.key ? "0 2px 8px rgba(0,0,0,0.2)" : "none",
+              color: activeTab === tab.key ? "#ffffff" : "var(--text-sub)",
+              transition: "all 0.15s ease",
             }}
           >
             {tab.label}

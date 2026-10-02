@@ -73,110 +73,109 @@ export default function ProvePage() {
   }
 
   return (
-    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
             <Badge variant="brand">Skill Assessments</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Technical Verification</span>
+            <span style={{ fontSize: "12.5px", color: "var(--text-sub)" }}>Technical Verification</span>
           </div>
-          <h1 style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.03em" }}>
+          <h1 style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "-0.025em" }}>
             Assessments & Skill Proof
           </h1>
-          <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
+          <p style={{ color: "var(--text-sub)", fontSize: "13px", marginTop: "3px" }}>
             Complete timed technical assessments to verify your skills and increase your job match ranking.
           </p>
         </div>
 
         <Link href="/opportunities" prefetch={true} style={{ textDecoration: "none" }}>
-          <Button variant="secondary" size="md" icon={<Target size={15} />}>
+          <Button variant="secondary" size="sm" icon={<Target size={14} />}>
             View Opportunities
           </Button>
         </Link>
       </div>
 
       {/* Proving System Banner */}
-      <Card
+      <div
+        className="ui-card"
         style={{
-          background: "linear-gradient(135deg, rgba(157,78,221,0.08) 0%, rgba(20,22,30,0.95) 100%)",
-          borderColor: "rgba(157,78,221,0.25)",
-          padding: "24px",
+          background: "linear-gradient(135deg, rgba(168,85,247,0.06) 0%, rgba(12,18,32,0.98) 100%)",
+          borderColor: "rgba(168,85,247,0.25)",
+          padding: "16px 20px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
-          gap: "16px",
+          gap: "12px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <div style={{ width: "48px", height: "48px", borderRadius: "10px", background: "rgba(157,78,221,0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#9d4edd" }}>
-            <ShieldCheck size={26} />
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "6px", background: "rgba(168,85,247,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-purple)" }}>
+            <ShieldCheck size={22} />
           </div>
           <div>
-            <h2 style={{ fontSize: "18px", fontWeight: 800 }}>Proctored Assessment Environment</h2>
-            <p style={{ fontSize: "13px", color: "var(--text-sub)", marginTop: "2px" }}>
-              Sessions run in a distraction-free workspace with tab focus monitoring and instant score verification.
+            <h2 style={{ fontSize: "15px", fontWeight: 700 }}>Proctored Assessment Environment</h2>
+            <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+              Sessions run in a distraction-free workspace with tab focus monitoring and instant score calibration.
             </p>
           </div>
         </div>
-        <Badge variant="purple" icon={<Lock size={13} />}>
+        <Badge variant="purple" icon={<Lock size={12} />} size="sm">
           Verified Proof
         </Badge>
-      </Card>
+      </div>
 
       {/* Assessment Catalog */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+      <div className="grid-2">
         {assessments.map((asm) => (
-          <Card
+          <div
             key={asm.id}
+            className="ui-card"
             style={{
-              padding: "24px",
+              padding: "16px 18px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              gap: "20px",
+              gap: "14px",
             }}
           >
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
                 <div>
-                  <Badge variant="brand">{asm.difficulty}</Badge>
-                  <h3 style={{ fontSize: "19px", fontWeight: 800, marginTop: "8px" }}>{asm.title}</h3>
+                  <Badge variant="brand" size="sm">{asm.difficulty}</Badge>
+                  <h3 style={{ fontSize: "16px", fontWeight: 700, marginTop: "6px" }}>{asm.title}</h3>
                 </div>
-                <Badge variant="neutral" icon={<Clock size={13} />}>{asm.time_limit_minutes} mins</Badge>
+                <Badge variant="neutral" icon={<Clock size={12} />} size="sm">{asm.time_limit_minutes} mins</Badge>
               </div>
 
-              <p style={{ fontSize: "14px", color: "var(--text-sub)", marginTop: "10px", lineHeight: 1.6 }}>
+              <p style={{ fontSize: "12.5px", color: "var(--text-sub)", marginTop: "8px", lineHeight: 1.5 }}>
                 {asm.description || "Comprehensive diagnostic assessing low-latency consensus, log compaction, quorums, and fault tolerance under network partitions."}
               </p>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px", background: "rgba(255,255,255,0.02)", padding: "12px 14px", borderRadius: "8px", border: "1px solid var(--border-subtle)", fontSize: "13px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "12px", background: "rgba(255,255,255,0.02)", padding: "10px 12px", borderRadius: "6px", border: "1px solid var(--border-subtle)", fontSize: "12px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-sub)" }}>Skills Evaluated:</span>
+                  <span style={{ color: "var(--text-dim)" }}>Skills Evaluated:</span>
                   <span style={{ fontWeight: 600, color: "var(--text-main)" }}>Distributed Consensus, Raft, Fault Tolerance</span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-sub)" }}>Passing Score:</span>
-                  <span style={{ fontWeight: 700, color: "var(--brand)" }}>{asm.passing_score}%</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "var(--text-sub)" }}>Unlocks:</span>
-                  <span style={{ fontWeight: 700, color: "#10b981" }}>+1.8 Skill Boost & 12 Target Opportunities</span>
+                  <span style={{ color: "var(--text-dim)" }}>Passing Score:</span>
+                  <span style={{ fontWeight: 600, color: "var(--accent-emerald)" }}>{asm.passing_score_pct}% or higher</span>
                 </div>
               </div>
             </div>
 
             <Button
               variant="primary"
-              fullWidth
-              size="md"
-              icon={<Award size={16} />}
+              size="sm"
+              style={{ width: "100%" }}
+              icon={<ArrowRight size={13} />}
+              iconPosition="right"
               onClick={() => handleOpenSecurityModal(asm)}
             >
-              Start Proctored Assessment
+              Start Assessment
             </Button>
-          </Card>
+          </div>
         ))}
       </div>
 

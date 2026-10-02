@@ -59,158 +59,151 @@ export default function OutcomesPage() {
   }
 
   return (
-    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
             <Badge variant="brand">Analytics</Badge>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Application Funnel</span>
+            <span style={{ fontSize: "12.5px", color: "var(--text-sub)" }}>Application Funnel</span>
           </div>
-          <h1 style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.03em" }}>
+          <h1 style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "-0.025em" }}>
             Application Analytics & Funnel
           </h1>
-          <p style={{ color: "var(--text-sub)", fontSize: "14px", marginTop: "4px", lineHeight: 1.55 }}>
+          <p style={{ color: "var(--text-sub)", fontSize: "13px", marginTop: "3px" }}>
             Track application conversion rates across interview stages and view recommendations.
           </p>
         </div>
 
         <Link href="/improve" prefetch={true} style={{ textDecoration: "none" }}>
-          <Button variant="primary" size="md" icon={<BookOpen size={15} />}>
+          <Button variant="primary" size="sm" icon={<BookOpen size={13} />}>
             View Learning Plan →
           </Button>
         </Link>
       </div>
 
       {/* STRATEGIC BOTTLENECK DIAGNOSTIC (CLOSED LOOP TO IMPROVE) */}
-      <Card
+      <div
+        className="ui-card"
         style={{
-          background: "linear-gradient(135deg, rgba(230,57,70,0.08) 0%, rgba(20,22,30,0.95) 100%)",
-          borderColor: "rgba(230,57,70,0.3)",
-          padding: "24px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "16px",
+          background: "linear-gradient(135deg, rgba(225,29,72,0.06) 0%, rgba(12,18,32,0.98) 100%)",
+          borderColor: "rgba(225,29,72,0.25)",
+          padding: "16px 20px",
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
-          <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
-            <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: "rgba(230,57,70,0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--brand)", flexShrink: 0 }}>
-              <Sparkles size={22} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "14px" }}>
+          <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+            <div style={{ width: "38px", height: "38px", borderRadius: "6px", background: "rgba(225,29,72,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--brand)", flexShrink: 0 }}>
+              <Sparkles size={20} />
             </div>
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase", color: "var(--brand)", letterSpacing: "0.06em" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--brand)", letterSpacing: "0.05em" }}>
                   Key Improvement Area
                 </span>
-                <Badge variant="brand">High Impact</Badge>
+                <Badge variant="brand" size="sm">High Impact</Badge>
               </div>
-              <h2 style={{ fontSize: "19px", fontWeight: 800, marginTop: "4px" }}>
+              <h2 style={{ fontSize: "16px", fontWeight: 800, marginTop: "2px" }}>
                 Technical Round: GPU Cluster Scheduling & Triton Serving
               </h2>
-              <p style={{ fontSize: "14px", color: "var(--text-sub)", marginTop: "6px", lineHeight: 1.6 }}>
+              <p style={{ fontSize: "12.5px", color: "var(--text-sub)", marginTop: "4px", lineHeight: 1.5 }}>
                 You have a 100% pass rate at recruiter screen. Building verified projects with GPU streaming concurrency and Triton dynamic batching will significantly boost technical round pass rates.
               </p>
             </div>
           </div>
 
           <Link href="/improve" prefetch={true} style={{ textDecoration: "none" }}>
-            <Button variant="primary" size="md" icon={<ArrowRight size={15} />}>
-              Start Recommended Task
+            <Button variant="primary" size="sm" icon={<ArrowRight size={13} />}>
+              Start Task
             </Button>
           </Link>
         </div>
-      </Card>
+      </div>
 
       {/* Conversion Funnel Breakdown */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-        <h3 style={{ fontSize: "18px", fontWeight: 700 }}>Conversion Funnel Analytics</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "14px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Conversion Funnel</h3>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "12px" }}>
           {stages.map((stage, idx) => (
-            <Card key={idx} style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "8px", position: "relative" }}>
-              <div style={{ fontSize: "12px", color: "var(--text-sub)", fontWeight: 600 }}>{stage.label}</div>
-              <div style={{ fontSize: "28px", fontWeight: 800, color: "var(--text-main)" }}>{stage.count}</div>
-              <div style={{ fontSize: "12px", color: stage.color, fontWeight: 700 }}>
+            <div key={idx} className="ui-card" style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "4px" }}>
+              <div style={{ fontSize: "11.5px", color: "var(--text-dim)", fontWeight: 600 }}>{stage.label}</div>
+              <div style={{ fontSize: "22px", fontWeight: 800, color: "var(--text-main)" }}>{stage.count}</div>
+              <div style={{ fontSize: "11.5px", color: stage.color, fontWeight: 700 }}>
                 {stage.rate} conversion
               </div>
-              {idx < stages.length - 1 && (
-                <div style={{ position: "absolute", right: "-12px", top: "50%", transform: "translateY(-50%)", zIndex: 2, color: "var(--text-muted)" }}>
-                  →
-                </div>
-              )}
-            </Card>
+            </div>
           ))}
         </div>
       </div>
 
       {/* REJECTION & FAILURE REASONS (CLOSED-LOOP FEEDBACK MATRIX) */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
-        <Card style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <AlertTriangle size={20} style={{ color: "var(--brand)" }} />
-            <h3 style={{ fontSize: "17px", fontWeight: 800 }}>Outcome Gap Intelligence</h3>
+      <div className="grid-2">
+        <div className="ui-card" style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <AlertTriangle size={17} color="var(--brand)" />
+            <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Interview Feedback Intelligence</h3>
           </div>
-          <p style={{ fontSize: "13px", color: "var(--text-sub)", lineHeight: 1.6 }}>
-            Direct interview feedback analyzed and mapped to specific competencies:
+          <p style={{ fontSize: "12.5px", color: "var(--text-sub)", lineHeight: 1.5 }}>
+            Direct interview feedback mapped to specific competencies:
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ padding: "14px", background: "rgba(255,255,255,0.02)", borderRadius: "8px", border: "1px solid var(--border-subtle)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ padding: "12px", background: "var(--bg-elevated)", borderRadius: "6px", border: "1px solid var(--border-subtle)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "14px", fontWeight: 700 }}>Anthropic (Principal Infrastructure)</span>
-                <Badge variant="warning">Outcome Gap</Badge>
+                <span style={{ fontSize: "13px", fontWeight: 700 }}>Anthropic (Principal Infrastructure)</span>
+                <Badge variant="warning" size="sm">Outcome Gap</Badge>
               </div>
-              <p style={{ fontSize: "13px", color: "var(--text-sub)", marginTop: "6px", lineHeight: 1.5 }}>
+              <p style={{ fontSize: "12.5px", color: "var(--text-sub)", marginTop: "4px", lineHeight: 1.45 }}>
                 &ldquo;Candidate demonstrated stellar Raft consensus foundations, but lacked production evidence for multi-stream dynamic GPU queuing.&rdquo;
               </p>
-              <div style={{ marginTop: "10px", display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px", borderTop: "1px solid var(--border-subtle)" }}>
-                <span style={{ fontSize: "12px", color: "var(--brand)", fontWeight: 600 }}>Diagnosed Gap: Triton Dynamic Batching</span>
-                <Link href="/improve" prefetch={true} style={{ textDecoration: "none", fontSize: "12px", color: "var(--brand)", fontWeight: 700 }}>
-                  Fix in Improve →
+              <div style={{ marginTop: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "6px", borderTop: "1px solid var(--border-subtle)" }}>
+                <span style={{ fontSize: "11.5px", color: "var(--brand)", fontWeight: 600 }}>Diagnosed Gap: Triton Dynamic Batching</span>
+                <Link href="/improve" prefetch={true} style={{ textDecoration: "none", fontSize: "11.5px", color: "var(--brand)", fontWeight: 700 }}>
+                  Fix in Learning Plan →
                 </Link>
               </div>
             </div>
 
-            <div style={{ padding: "14px", background: "rgba(255,255,255,0.02)", borderRadius: "8px", border: "1px solid var(--border-subtle)" }}>
+            <div style={{ padding: "12px", background: "rgba(255,255,255,0.02)", borderRadius: "6px", border: "1px solid var(--border-subtle)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "14px", fontWeight: 700 }}>Datadog (Staff Storage Architect)</span>
-                <Badge variant="cyan">Advancing</Badge>
+                <span style={{ fontSize: "13px", fontWeight: 700 }}>Datadog (Staff Storage Architect)</span>
+                <Badge variant="cyan" size="sm">Advancing</Badge>
               </div>
-              <p style={{ fontSize: "13px", color: "var(--text-sub)", lineHeight: 1.5 }}>
+              <p style={{ fontSize: "12.5px", color: "var(--text-sub)", marginTop: "4px", lineHeight: 1.45 }}>
                 &ldquo;Exceptional mastery in zero-copy LSM compaction algorithms. Fast-tracked to final offer committee.&rdquo;
               </p>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Offer & Negotiation Intelligence */}
-        <Card style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <CheckCircle2 size={20} style={{ color: "#10b981" }} />
-            <h3 style={{ fontSize: "17px", fontWeight: 800 }}>Offer & Compensation Intelligence</h3>
+        <div className="ui-card" style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <CheckCircle2 size={17} color="#10b981" />
+            <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Offer & Compensation Intelligence</h3>
           </div>
-          <p style={{ fontSize: "13px", color: "var(--text-sub)", lineHeight: 1.6 }}>
+          <p style={{ fontSize: "12.5px", color: "var(--text-sub)", lineHeight: 1.5 }}>
             Current active offer benchmarked against industry peer percentiles:
           </p>
 
-          <div style={{ padding: "16px", background: "rgba(16,185,129,0.06)", borderRadius: "10px", border: "1px solid rgba(16,185,129,0.25)", display: "flex", flexDirection: "column", gap: "10px" }}>
+          <div style={{ padding: "14px", background: "rgba(16,185,129,0.06)", borderRadius: "6px", border: "1px solid rgba(16,185,129,0.25)", display: "flex", flexDirection: "column", gap: "8px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: "15px", fontWeight: 800 }}>Stripe (Staff Infrastructure)</span>
-              <Badge variant="success">Offer Received</Badge>
+              <span style={{ fontSize: "14px", fontWeight: 800 }}>Stripe (Staff Infrastructure)</span>
+              <Badge variant="success" size="sm">Offer Received</Badge>
             </div>
-            <div style={{ fontSize: "24px", fontWeight: 900, color: "#10b981" }}>
-              $290,000 / yr <span style={{ fontSize: "14px", color: "var(--text-sub)", fontWeight: 500 }}>+ $140k Equity/yr</span>
+            <div style={{ fontSize: "20px", fontWeight: 900, color: "#10b981" }}>
+              $290,000 / yr <span style={{ fontSize: "12.5px", color: "var(--text-sub)", fontWeight: 500 }}>+ $140k Equity/yr</span>
             </div>
-            <div style={{ fontSize: "12px", color: "var(--text-sub)" }}>
+            <div style={{ fontSize: "11.5px", color: "var(--text-sub)" }}>
               📍 92nd percentile for San Francisco Staff Infrastructure Architects
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--border-subtle)", paddingTop: "14px" }}>
-            <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>Career Operating Loop Status:</span>
-            <Badge variant="brand">82% Overall Readiness</Badge>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--border-subtle)", paddingTop: "10px" }}>
+            <span style={{ fontSize: "12.5px", color: "var(--text-sub)" }}>Career Readiness Status:</span>
+            <Badge variant="brand" size="sm">82% Overall</Badge>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

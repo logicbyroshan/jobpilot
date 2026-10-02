@@ -19,6 +19,11 @@ import {
   ShieldCheck,
   AlertCircle,
   ChevronRight,
+  Edit3,
+  X,
+  Check,
+  DollarSign,
+  Building,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import {
@@ -35,7 +40,6 @@ import { Button } from "./components/ui/Button";
 import { Badge } from "./components/ui/Badge";
 import { Card } from "./components/ui/Card";
 import { useToast } from "@/lib/toast-context";
-import { Edit3, X, Check, DollarSign, Building } from "lucide-react";
 
 export default function OverviewPage() {
   const { showToast } = useToast();
@@ -108,8 +112,7 @@ export default function OverviewPage() {
       });
       setGoal(updated);
       setIsGoalModalOpen(false);
-      showToast(`Target goal updated to "${editRole}"!`, "success");
-      // Auto trigger recalculation
+      showToast(`Target role updated to "${editRole}"!`, "success");
       handleRecalculate();
     } catch (err) {
       console.error("Error saving goal:", err);
@@ -119,54 +122,29 @@ export default function OverviewPage() {
     }
   };
 
-  const stages = [
-    { num: "01", name: "Profile", href: "/know", tag: "8 Skills", icon: UserCheck, active: false },
-    { num: "02", name: "Opportunities", href: "/opportunities", tag: "94% Fit", icon: Target, active: false },
-    { num: "03", name: "Skill Gaps", href: "/gaps", tag: "1 Blocker", icon: Sparkles, active: false },
-    { num: "04", name: "Learning Plan", href: "/improve", tag: "Tasks", icon: BookOpen, active: false },
-    { num: "05", name: "Assessments", href: "/prove", tag: "Ready", icon: Award, active: true },
-    { num: "06", name: "Applications", href: "/applications", tag: "2 Active", icon: Send, active: false },
-    { num: "07", name: "Analytics", href: "/outcomes", tag: "1 Offer", icon: TrendingUp, active: false },
-  ];
-
   return (
-    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "22px" }}>
-      {/* 1. Header with Career Goal and Readiness */}
+    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+      {/* 1. Header with Career Goal and Quick Actions */}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-start",
           flexWrap: "wrap",
-          gap: "14px",
-          paddingBottom: "2px",
+          gap: "12px",
         }}
       >
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Badge variant="brand">JobPilot</Badge>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+            <Badge variant="brand">Dashboard</Badge>
             <Badge variant="success" dot>Active</Badge>
           </div>
-          <h1 style={{ fontSize: "24px", fontWeight: 800, letterSpacing: "-0.025em" }}>
+          <h1 style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "-0.025em" }}>
             Good afternoon, {profile?.full_name || "Alex Chen"}
           </h1>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              marginTop: "6px",
-              fontSize: "13.5px",
-              color: "var(--text-sub)",
-              flexWrap: "wrap",
-            }}
-          >
-            <span>Target: <strong style={{ color: "#ffffff" }}>{goal?.target_role || "Staff Distributed Systems Architect"}</strong></span>
-            <span style={{ color: "var(--border-subtle)" }}>•</span>
-            <span>Readiness: <strong style={{ color: "var(--accent-emerald)", fontWeight: 700 }}>82%</strong></span>
-            <span style={{ color: "var(--border-subtle)" }}>•</span>
-            <span>Profile Confidence: <strong style={{ color: "var(--accent-cyan)", fontWeight: 700 }}>94.2%</strong></span>
-          </div>
+          <p style={{ color: "var(--text-sub)", fontSize: "13px", marginTop: "3px" }}>
+            Target: <strong style={{ color: "var(--text-main)" }}>{goal?.target_role || "Staff Distributed Systems Architect"}</strong> • {goal?.target_salary_range || "$240k - $320k"}
+          </p>
         </div>
 
         <div style={{ display: "flex", gap: "8px" }}>
@@ -186,7 +164,7 @@ export default function OverviewPage() {
             disabled={recalculating}
             icon={
               <RefreshCw
-                size={14}
+                size={13}
                 style={{ animation: recalculating ? "spin 0.8s linear infinite" : "none" }}
               />
             }
@@ -196,292 +174,269 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      {/* 2. PRIMARY "NEXT BEST ACTION" HERO CARD */}
-      <div
-        className="ui-card"
-        style={{
-          background: "linear-gradient(135deg, #0e1526 0%, #090e1b 100%)",
-          border: "1px solid rgba(255, 255, 255, 0.14)",
-          padding: "20px 24px",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
-          <div style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
-            <div
-              style={{
-                width: "44px",
-                height: "44px",
-                borderRadius: "8px",
-                background: "rgba(168, 85, 247, 0.12)",
-                border: "1px solid rgba(168, 85, 247, 0.3)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <Award size={22} color="var(--accent-purple)" />
-            </div>
-
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-                <span style={{ fontSize: "11.5px", fontWeight: 700, textTransform: "uppercase", color: "#d8b4fe", letterSpacing: "0.06em" }}>
-                  Recommended Action
-                </span>
-                <Badge variant="purple" size="sm">20 min test</Badge>
-              </div>
-
-              <h2 style={{ fontSize: "17.5px", fontWeight: 700, marginBottom: "8px" }}>
-                Verify Skill: Distributed Consensus & Raft
-              </h2>
-
-              {/* High-Impact Stat Chips */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                <Badge variant="success" size="sm">
-                  +1.8 Level Boost
-                </Badge>
-                <Badge variant="cyan" size="sm">
-                  Unlocks 12 Tier-1 Roles
-                </Badge>
-                <span style={{ fontSize: "13px", color: "var(--text-sub)" }}>
-                  Verified code proof for distributed systems engineering.
-                </span>
-              </div>
-            </div>
+      {/* 2. Top 4 Quick Metric Cards */}
+      <div className="grid-4">
+        <div className="ui-card" style={{ padding: "14px 16px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+            <span style={{ fontSize: "11.5px", fontWeight: 600, color: "var(--text-dim)", textTransform: "uppercase" }}>Readiness Score</span>
+            <Award size={15} color="var(--accent-emerald)" />
           </div>
+          <div style={{ fontSize: "20px", fontWeight: 800, color: "var(--accent-emerald)", marginBottom: "6px" }}>
+            82%
+          </div>
+          <div className="progress-bar-bg">
+            <div className="progress-bar-fill" style={{ width: "82%", background: "var(--accent-emerald)" }} />
+          </div>
+        </div>
 
-          <Link href="/prove" prefetch={true} style={{ textDecoration: "none" }}>
-            <Button variant="primary" size="lg" icon={<ArrowRight size={15} />} iconPosition="right">
-              Start Assessment
-            </Button>
-          </Link>
+        <div className="ui-card" style={{ padding: "14px 16px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+            <span style={{ fontSize: "11.5px", fontWeight: 600, color: "var(--text-dim)", textTransform: "uppercase" }}>Top Match Fit</span>
+            <Target size={15} color="var(--accent-cyan)" />
+          </div>
+          <div style={{ fontSize: "20px", fontWeight: 800, color: "var(--accent-cyan)", marginBottom: "2px" }}>
+            94%
+          </div>
+          <span style={{ fontSize: "11.5px", color: "var(--text-muted)" }}>{matches.length} curated opportunities</span>
+        </div>
+
+        <div className="ui-card" style={{ padding: "14px 16px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+            <span style={{ fontSize: "11.5px", fontWeight: 600, color: "var(--text-dim)", textTransform: "uppercase" }}>Skill Gaps</span>
+            <Sparkles size={15} color="var(--accent-amber)" />
+          </div>
+          <div style={{ fontSize: "20px", fontWeight: 800, color: "var(--accent-amber)", marginBottom: "2px" }}>
+            {gaps.length} Blocker
+          </div>
+          <span style={{ fontSize: "11.5px", color: "var(--text-muted)" }}>+8.5% fit gain upon closing</span>
+        </div>
+
+        <div className="ui-card" style={{ padding: "14px 16px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+            <span style={{ fontSize: "11.5px", fontWeight: 600, color: "var(--text-dim)", textTransform: "uppercase" }}>Applications</span>
+            <Send size={15} color="var(--accent-primary)" />
+          </div>
+          <div style={{ fontSize: "20px", fontWeight: 800, color: "var(--text-main)", marginBottom: "2px" }}>
+            {applications.length} Active
+          </div>
+          <span style={{ fontSize: "11.5px", color: "var(--accent-emerald)", fontWeight: 600 }}>1 Offer in review</span>
         </div>
       </div>
 
-      {/* 3. CAREER JOURNEY LOOP PIPELINE */}
-      <div className="ui-card" style={{ padding: "16px 20px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-          <div style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase", color: "var(--text-dim)", letterSpacing: "0.06em" }}>
-            Career Journey
-          </div>
-          <span style={{ fontSize: "12.5px", color: "var(--text-sub)" }}>
-            Current Focus: <strong style={{ color: "#ffffff" }}>Assessments</strong>
-          </span>
-        </div>
+      {/* 3. Main 2-Column Split Layout */}
+      <div className="grid-split-65-35">
+        {/* Left Column (Primary Content) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          {/* Next Best Action Card */}
+          <div
+            className="ui-card"
+            style={{
+              background: "linear-gradient(135deg, #0e1526 0%, #090e1b 100%)",
+              border: "1px solid rgba(168, 85, 247, 0.3)",
+              padding: "16px 20px",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "14px" }}>
+              <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "6px",
+                    background: "rgba(168, 85, 247, 0.12)",
+                    border: "1px solid rgba(168, 85, 247, 0.3)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Award size={20} color="var(--accent-purple)" />
+                </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "8px" }}>
-          {stages.map((stg) => {
-            const Icon = stg.icon;
-            return (
-              <Link
-                key={stg.num}
-                href={stg.href}
-                prefetch={true}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  padding: "10px 12px",
-                  borderRadius: "6px",
-                  background: stg.active ? "var(--bg-elevated)" : "rgba(255, 255, 255, 0.02)",
-                  border: stg.active ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid var(--border-subtle)",
-                  textDecoration: "none",
-                  transition: "all 0.15s ease",
-                  boxShadow: stg.active ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "none",
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                  <span style={{ fontSize: "11px", fontWeight: 700, color: stg.active ? "var(--text-main)" : "var(--text-dim)" }}>
-                    {stg.num}
-                  </span>
-                  <Icon size={14} color={stg.active ? "#ffffff" : "var(--text-dim)"} />
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
+                    <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#d8b4fe", letterSpacing: "0.05em" }}>
+                      Recommended Action
+                    </span>
+                    <Badge variant="purple" size="sm">20 min</Badge>
+                  </div>
+                  <h2 style={{ fontSize: "15.5px", fontWeight: 700, color: "var(--text-main)" }}>
+                    Verify Skill: Distributed Consensus & Raft
+                  </h2>
+                  <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+                    Calibrate your hands-on proficiency to boost readiness to 89% and unlock 12 tier-1 roles.
+                  </p>
                 </div>
-                <div style={{ fontSize: "13.5px", fontWeight: 700, color: stg.active ? "#ffffff" : "var(--text-sub)", marginBottom: "2px" }}>
-                  {stg.name}
-                </div>
-                <div style={{ fontSize: "12px", fontWeight: 600, color: stg.active ? "var(--accent-emerald)" : "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {stg.tag}
-                </div>
+              </div>
+
+              <Link href="/prove" prefetch={true} style={{ textDecoration: "none" }}>
+                <Button variant="primary" size="sm" icon={<ArrowRight size={13} />} iconPosition="right">
+                  Start Assessment
+                </Button>
               </Link>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 4. THREE-COLUMN OVERVIEW GRID */}
-      <div className="grid-3">
-        {/* Top Job Matches */}
-        <div className="ui-card ui-card-hover">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Target size={17} color="var(--accent-cyan)" />
-              <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Top Job Matches</h3>
             </div>
-            <Link href="/opportunities" prefetch={true} style={{ fontSize: "12.5px", color: "var(--text-sub)", textDecoration: "none", fontWeight: 600 }}>
-              View All ({matches.length}) →
-            </Link>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {(matches || []).slice(0, 2).map((m) => (
-              <Link
-                key={m.id}
-                href={`/opportunities/${m.job?.id || m.id}`}
-                prefetch={true}
-                style={{
-                  padding: "12px 14px",
-                  borderRadius: "6px",
-                  background: "var(--bg-elevated)",
-                  border: "1px solid var(--border-subtle)",
-                  textDecoration: "none",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "4px",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+          {/* Top Job Matches */}
+          <div className="ui-card">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Target size={16} color="var(--accent-cyan)" />
+                <h3 style={{ fontSize: "14.5px", fontWeight: 700 }}>Top Job Matches</h3>
+              </div>
+              <Link href="/opportunities" prefetch={true} style={{ fontSize: "12px", color: "var(--accent-cyan)", textDecoration: "none", fontWeight: 600 }}>
+                View All ({matches.length}) →
+              </Link>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {(matches || []).slice(0, 3).map((m) => (
+                <Link
+                  key={m.id}
+                  href={`/opportunities/${m.job?.id || m.id}`}
+                  prefetch={true}
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: "6px",
+                    background: "var(--bg-elevated)",
+                    border: "1px solid var(--border-subtle)",
+                    textDecoration: "none",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    transition: "all 0.15s ease",
+                  }}
+                >
                   <div>
-                    <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-main)" }}>{m.job?.title || "Target Role"}</div>
-                    <div style={{ fontSize: "12.5px", color: "var(--text-muted)" }}>
-                      {m.job?.company?.name || "Company"} • {m.job?.location || "Remote"}
+                    <div style={{ fontSize: "13.5px", fontWeight: 700, color: "var(--text-main)" }}>
+                      {m.job?.title || "Target Role"}
+                    </div>
+                    <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+                      {m.job?.company?.name || "Company"} • {m.job?.location || "Remote"} • ${(((m.job?.salary_min || 200000)) / 1000).toFixed(0)}k - ${(((m.job?.salary_max || 300000)) / 1000).toFixed(0)}k
                     </div>
                   </div>
-                  <Badge variant={(m.overall_score || 0) >= 90 ? "success" : "cyan"} size="sm">
-                    {(m.overall_score || 0).toFixed(0)}% Match
-                  </Badge>
-                </div>
 
-                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "4px" }}>
-                  <span style={{ fontSize: "11.5px", color: "#38bdf8", background: "rgba(56, 189, 248, 0.08)", padding: "1px 6px", borderRadius: "3px" }}>
-                    ${(((m.job?.salary_min || 200000)) / 1000).toFixed(0)}k - ${(((m.job?.salary_max || 300000)) / 1000).toFixed(0)}k
-                  </span>
-                  <span style={{ fontSize: "11.5px", color: "var(--text-sub)", background: "rgba(255, 255, 255, 0.04)", padding: "1px 6px", borderRadius: "3px" }}>
-                    {m.job?.seniority || "Senior"}
-                  </span>
-                </div>
+                  <Badge variant={(m.overall_score || 0) >= 90 ? "success" : "cyan"} size="sm">
+                    {(m.overall_score || 0).toFixed(0)}% Fit
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Skill Gaps Card */}
+          <div className="ui-card">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Sparkles size={16} color="var(--accent-amber)" />
+                <h3 style={{ fontSize: "14.5px", fontWeight: 700 }}>Priority Skill Gap</h3>
+              </div>
+              <Link href="/improve" prefetch={true} style={{ fontSize: "12px", color: "var(--accent-amber)", textDecoration: "none", fontWeight: 600 }}>
+                Learning Plan →
               </Link>
-            ))}
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {(gaps || []).slice(0, 2).map((g) => (
+                <div
+                  key={g.id}
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: "6px",
+                    background: "var(--bg-elevated)",
+                    border: "1px solid var(--border-subtle)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ fontSize: "13.5px", fontWeight: 700, color: "var(--text-main)" }}>
+                        {g.title || g.skill_name || "Skill Deficit"}
+                      </span>
+                      <Badge variant={g.priority === "CRITICAL" ? "brand" : "warning"} size="sm">
+                        {g.priority || "HIGH"}
+                      </Badge>
+                    </div>
+                    <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+                      Level {g.current_level || 3}/10 → Target {g.target_level || 6}/10 • {g.expected_impact || "+8.5% Match Gain"}
+                    </div>
+                  </div>
+
+                  <Link href="/improve" prefetch={true} style={{ textDecoration: "none" }}>
+                    <Button variant="secondary" size="sm">
+                      Start Task
+                    </Button>
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Skill Gaps */}
-        <div className="ui-card ui-card-hover">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Sparkles size={17} color="var(--accent-amber)" />
-              <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Skill Gaps</h3>
+        {/* Right Column (Secondary Content) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          {/* Career Insight Card */}
+          <div
+            className="ui-card"
+            style={{
+              background: "radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.08) 0%, rgba(12, 18, 32, 1) 75%)",
+              border: "1px solid rgba(6, 182, 212, 0.25)",
+              padding: "16px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+              <Zap size={16} color="var(--accent-cyan)" />
+              <h3 style={{ fontSize: "14px", fontWeight: 700 }}>Career Insight</h3>
             </div>
-            <Link href="/gaps" prefetch={true} style={{ fontSize: "12.5px", color: "var(--text-sub)", textDecoration: "none", fontWeight: 600 }}>
-              View Gaps ({gaps.length}) →
+            <p style={{ fontSize: "12.5px", color: "var(--text-sub)", lineHeight: 1.5, marginBottom: "12px" }}>
+              Your profile shows strong systems depth. Completing hands-on proof for Raft consensus will increase your qualification for senior architect compensation bands.
+            </p>
+            <Link href="/prove" prefetch={true} style={{ textDecoration: "none" }}>
+              <Button variant="secondary" size="sm" style={{ width: "100%" }}>
+                View Assessments
+              </Button>
             </Link>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {(gaps || []).slice(0, 2).map((g) => (
-              <Link
-                key={g.id}
-                href="/improve"
-                prefetch={true}
-                style={{
-                  padding: "12px 14px",
-                  borderRadius: "6px",
-                  background: "var(--bg-elevated)",
-                  border: "1px solid var(--border-subtle)",
-                  textDecoration: "none",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "4px",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                  <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-main)" }}>{g.title || g.skill_name || "Skill Deficit"}</div>
-                  <Badge variant={g.priority === "CRITICAL" ? "brand" : "warning"} size="sm">{g.priority || "HIGH"}</Badge>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "2px" }}>
-                  <span style={{ fontSize: "12.5px", color: "var(--text-muted)" }}>
-                    Lv {g.current_level || 3} → Target {g.target_level || 6}
-                  </span>
-                  <span style={{ fontSize: "12px", color: "var(--accent-emerald)", fontWeight: 600 }}>
-                    {g.expected_impact || "+8.5% Fit Gain"}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Career AI Insight */}
-        <div
-          className="ui-card"
-          style={{
-            background: "radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.08) 0%, rgba(13, 19, 34, 1) 75%)",
-            border: "1px solid rgba(6, 182, 212, 0.25)",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
-              <Zap size={17} color="var(--accent-cyan)" />
-              <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Career Insight</h3>
+          {/* Recent Activity Timeline */}
+          <div className="ui-card" style={{ padding: "16px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <h3 style={{ fontSize: "14px", fontWeight: 700 }}>Activity Feed</h3>
+              <span style={{ fontSize: "11.5px", color: "var(--text-dim)" }}>Live Sync</span>
             </div>
 
-            <p style={{ fontSize: "13.5px", color: "var(--text-sub)", lineHeight: 1.55, marginBottom: "14px" }}>
-              &ldquo;Your profile is strong for senior backend positions. Your fastest match booster is completing verification for Kubernetes operators and Triton model serving.&rdquo;
-            </p>
-          </div>
-
-          <Link href="/improve" prefetch={true} style={{ textDecoration: "none" }}>
-            <Button variant="secondary" size="md" style={{ width: "100%" }}>
-              View Learning Plan
-            </Button>
-          </Link>
-        </div>
-      </div>
-
-      {/* 5. RECENT ACTIVITY TIMELINE */}
-      <div className="ui-card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-          <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Recent Activity</h3>
-          <span style={{ fontSize: "12.5px", color: "var(--text-muted)" }}>Synced with connected sources</span>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          {activities.map((act) => (
-            <div
-              key={act.id}
-              style={{
-                padding: "10px 14px",
-                borderRadius: "6px",
-                background: "var(--bg-elevated)",
-                border: "1px solid var(--border-subtle)",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: "10px",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <Badge
-                  variant={
-                    act.stage === "PROVE" ? "purple" : act.stage === "MATCH" ? "cyan" : "brand"
-                  }
-                  size="sm"
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {(activities || []).slice(0, 4).map((act) => (
+                <div
+                  key={act.id}
+                  style={{
+                    padding: "8px 10px",
+                    borderRadius: "4px",
+                    background: "var(--bg-elevated)",
+                    border: "1px solid var(--border-subtle)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px",
+                  }}
                 >
-                  {act.stage}
-                </Badge>
-                <div>
-                  <span style={{ fontSize: "13.5px", fontWeight: 700, color: "var(--text-main)" }}>{act.title}</span>
-                  <span style={{ fontSize: "13px", color: "var(--text-sub)", marginLeft: "10px" }}>{act.description}</span>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-main)" }}>
+                      {act.title}
+                    </span>
+                    <span style={{ fontSize: "10.5px", color: "var(--text-dim)" }}>
+                      {act.timestamp}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: "11.5px", color: "var(--text-muted)", lineHeight: 1.3 }}>
+                    {act.description}
+                  </p>
                 </div>
-              </div>
-
-              <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>{act.timestamp}</span>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
 
@@ -506,26 +461,21 @@ export default function OverviewPage() {
             onClick={(e) => e.stopPropagation()}
             style={{
               width: "100%",
-              maxWidth: "480px",
-              background: "#0d1322",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
+              maxWidth: "460px",
+              background: "#0c1220",
+              border: "1px solid var(--border-subtle)",
               borderRadius: "8px",
-              boxShadow: "0 24px 48px rgba(0, 0, 0, 0.7)",
-              padding: "24px",
+              boxShadow: "var(--shadow-lg)",
+              padding: "22px",
               display: "flex",
               flexDirection: "column",
-              gap: "18px",
+              gap: "16px",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <div style={{ width: "32px", height: "32px", borderRadius: "6px", background: "rgba(6, 182, 212, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent-cyan)" }}>
-                  <Target size={18} />
-                </div>
-                <div>
-                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#f8fafc" }}>Set Target Direction</h3>
-                  <p style={{ fontSize: "12px", color: "var(--text-dim)" }}>Calibrates opportunity matching & gap diagnostics</p>
-                </div>
+                <Target size={18} color="var(--accent-cyan)" />
+                <h3 style={{ fontSize: "15px", fontWeight: 700, color: "var(--text-main)" }}>Set Target Direction</h3>
               </div>
               <button
                 onClick={() => setIsGoalModalOpen(false)}
@@ -534,16 +484,15 @@ export default function OverviewPage() {
                   border: "none",
                   color: "var(--text-dim)",
                   cursor: "pointer",
-                  padding: "4px",
                 }}
               >
                 <X size={16} />
               </button>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <div>
-                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
+                <label style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "4px" }}>
                   Target Role Title
                 </label>
                 <input
@@ -553,59 +502,43 @@ export default function OverviewPage() {
                   placeholder="e.g. Staff Distributed Systems Architect"
                   style={{
                     width: "100%",
-                    padding: "9px 12px",
-                    borderRadius: "6px",
+                    padding: "8px 10px",
+                    borderRadius: "4px",
                     background: "var(--bg-input)",
                     border: "1px solid var(--border-subtle)",
                     color: "var(--text-main)",
-                    fontSize: "13.5px",
-                    outline: "none",
+                    fontSize: "13px",
                   }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "6px" }}>
-                  Target Total Compensation Range
+                <label style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-sub)", display: "block", marginBottom: "4px" }}>
+                  Target Salary Range
                 </label>
                 <input
                   type="text"
                   value={editComp}
                   onChange={(e) => setEditComp(e.target.value)}
-                  placeholder="e.g. $240k – $320k + Equity"
+                  placeholder="e.g. $240k - $320k"
                   style={{
                     width: "100%",
-                    padding: "9px 12px",
-                    borderRadius: "6px",
+                    padding: "8px 10px",
+                    borderRadius: "4px",
                     background: "var(--bg-input)",
                     border: "1px solid var(--border-subtle)",
                     color: "var(--text-main)",
-                    fontSize: "13.5px",
-                    outline: "none",
+                    fontSize: "13px",
                   }}
                 />
               </div>
-
-              <div style={{ padding: "10px 12px", borderRadius: "6px", background: "rgba(225, 29, 72, 0.08)", border: "1px solid rgba(225, 29, 72, 0.2)", fontSize: "12px", color: "var(--text-sub)", lineHeight: 1.4 }}>
-                <strong style={{ color: "#fda4af" }}>AI Radar Impact:</strong> Updating your target role will dynamically re-rank all opportunity match percentages and highlight your critical learning gaps.
-              </div>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "4px" }}>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setIsGoalModalOpen(false)}
-              >
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+              <Button variant="secondary" size="sm" onClick={() => setIsGoalModalOpen(false)}>
                 Cancel
               </Button>
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleSaveGoal}
-                disabled={savingGoal}
-                icon={<Check size={14} />}
-              >
+              <Button variant="primary" size="sm" onClick={handleSaveGoal} disabled={savingGoal} icon={<Check size={13} />}>
                 {savingGoal ? "Saving..." : "Save & Recalculate"}
               </Button>
             </div>
