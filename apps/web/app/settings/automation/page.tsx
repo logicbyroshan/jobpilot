@@ -18,8 +18,10 @@ import { Badge } from "@/app/components/ui/Badge";
 import { Card } from "@/app/components/ui/Card";
 import { Input } from "@/app/components/ui/Input";
 import { Checkbox } from "@/app/components/ui/Checkbox";
+import { useToast } from "@/lib/toast-context";
 
 export default function AutomationSettingsPage() {
+  const { showToast } = useToast();
   const [policy, setPolicy] = useState<ApplicationPolicyType | null>(null);
   const [saving, setSaving] = useState(false);
   const [savedNotice, setSavedNotice] = useState(false);
@@ -43,9 +45,11 @@ export default function AutomationSettingsPage() {
       const updated = await api.updateApplicationPolicy(policy);
       setPolicy(updated);
       setSavedNotice(true);
+      showToast("Automation guardrails & policy updated!", "success");
       setTimeout(() => setSavedNotice(false), 3000);
     } catch (err) {
       console.error("Failed to save policy:", err);
+      showToast("Failed to save automation policy.", "error");
     } finally {
       setSaving(false);
     }
