@@ -136,11 +136,11 @@ export function Sidebar() {
 
   return (
     <aside className="sidebar">
-      {/* Brand Header — 60px height matching topbar */}
+      {/* Brand Header — 54px height matching topbar */}
       <div
         style={{
-          height: "60px",
-          padding: "0 18px",
+          height: "54px",
+          padding: "0 16px",
           borderBottom: "1px solid var(--border-subtle)",
           display: "flex",
           alignItems: "center",

@@ -254,26 +254,26 @@ export default function ImprovePage() {
 
       {/* KANBAN VIEW */}
       {viewMode === "kanban" && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", alignItems: "flex-start" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: "12px", alignItems: "flex-start" }}>
           {columns.map((col) => {
             const tasks = (dailyPlan.kanban_columns && dailyPlan.kanban_columns[col.key]) || [];
             return (
               <div
                 key={col.key}
                 style={{
-                  background: "var(--bg-surface)",
+                  background: "var(--bg-card)",
                   border: "1px solid var(--border-subtle)",
-                  borderRadius: "12px",
-                  padding: "14px",
+                  borderRadius: "var(--radius-md)",
+                  padding: "12px",
                   display: "flex",
                   flexDirection: "column",
-                  gap: "12px",
-                  minHeight: "450px",
+                  gap: "10px",
+                  minHeight: "420px",
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "8px", borderBottom: "1px solid var(--border-subtle)" }}>
-                  <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-main)" }}>{col.label}</div>
-                  <Badge variant={col.badge as any}>{tasks.length}</Badge>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "6px", borderBottom: "1px solid var(--border-subtle)" }}>
+                  <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--text-main)" }}>{col.label}</div>
+                  <Badge variant={col.badge as any} size="sm">{tasks.length}</Badge>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
