@@ -960,11 +960,32 @@ export const api = {
     }
     return {
       id: "att-1",
+      assessment_id: id,
+      score: 100,
       score_percentage: 100,
       passed: true,
       skill_boost_applied: true,
-      new_proficiency_level: 9.8,
-      feedback: "Exemplary understanding of Raft linearizable quorum mechanics.",
+      skill_level_before: 8.0,
+      skill_level_after: 9.8,
+      skill_proficiency_boost: 1.8,
+      feedback_summary: "Exemplary understanding of Raft linearizable quorum mechanics and distributed state machine replication.",
+      feedback: "Exemplary understanding of Raft linearizable quorum mechanics and distributed state machine replication.",
+      recalculated_matches_notice: "Match scores successfully recalculated. 12 Tier-1 positions now exceed your 90% threshold.",
+      unlocked_opportunities_count: 12,
+      breakdown: {
+        "Core Concepts": 10.0,
+        "Practical Reasoning": 9.6,
+        "Architectural Tradeoffs": 9.4,
+        "Failure Modes": 10.0,
+      },
+      what_improved: [
+        "Verified mastery of Raft leader election quorums and split-brain resolution.",
+        "Demonstrated deep understanding of linearizable vs sequential consistency.",
+        "Profile readiness updated in core career graph.",
+      ],
+      what_still_needs_work: [
+        "Optional: Explore multi-raft range partitioning for further scaling beyond 1M tx/sec.",
+      ],
       evaluations: [
         {
           question_id: "q-1",
