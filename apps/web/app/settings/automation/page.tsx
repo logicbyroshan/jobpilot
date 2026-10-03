@@ -64,7 +64,7 @@ export default function AutomationSettingsPage() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "840px" }}>
+    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "840px" }}>
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" }}>
         <div>
@@ -74,19 +74,20 @@ export default function AutomationSettingsPage() {
               display: "inline-flex",
               alignItems: "center",
               gap: "4px",
-              color: "var(--text-dim)",
+              color: "var(--text-sub)",
               fontSize: "12.5px",
+              fontWeight: 600,
               textDecoration: "none",
-              marginBottom: "6px",
+              marginBottom: "8px",
             }}
           >
-            <ChevronLeft size={13} /> Back to Applications
+            <ChevronLeft size={14} /> Back to Applications
           </Link>
-          <h1 style={{ fontSize: "22px", fontWeight: 700 }}>
+          <h1 style={{ fontSize: "24px", fontWeight: 800, letterSpacing: "-0.02em" }}>
             Automation Settings
           </h1>
-          <p style={{ color: "var(--text-muted)", fontSize: "13px", marginTop: "2px" }}>
-            Set daily application limits, auto-apply match thresholds, and safety guardrails.
+          <p style={{ color: "var(--text-muted)", fontSize: "13.5px", marginTop: "4px" }}>
+            Configure autonomous application limits, match thresholds, and safety guardrails.
           </p>
         </div>
 
@@ -105,12 +106,12 @@ export default function AutomationSettingsPage() {
       {savedNotice && (
         <div
           style={{
-            padding: "10px 14px",
-            borderRadius: "4px",
+            padding: "12px 16px",
+            borderRadius: "var(--radius-md)",
             background: "rgba(16, 185, 129, 0.1)",
             border: "1px solid rgba(16, 185, 129, 0.25)",
             color: "#34d399",
-            fontSize: "13px",
+            fontSize: "13.5px",
             fontWeight: 600,
             display: "flex",
             alignItems: "center",
@@ -123,27 +124,28 @@ export default function AutomationSettingsPage() {
       )}
 
       {/* 1. Operating Mode Selection */}
-      <Card style={{ padding: "20px" }}>
-        <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "4px" }}>Execution Mode</h3>
-        <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginBottom: "14px" }}>
+      <Card style={{ padding: "22px" }}>
+        <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "4px" }}>Execution Mode</h3>
+        <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "16px" }}>
           Choose how autonomously JobPilot executes applications on your behalf.
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px" }}>
           {/* MANUAL */}
           <div
             onClick={() => setPolicy({ ...policy, mode: "MANUAL" })}
             style={{
-              padding: "14px",
-              borderRadius: "4px",
+              padding: "16px",
+              borderRadius: "var(--radius-md)",
               background: policy.mode === "MANUAL" ? "rgba(255, 255, 255, 0.08)" : "var(--bg-elevated)",
-              border: policy.mode === "MANUAL" ? "1px solid rgba(255, 255, 255, 0.25)" : "1px solid var(--border-subtle)",
+              border: policy.mode === "MANUAL" ? "1px solid var(--accent-primary)" : "1px solid var(--border-subtle)",
               cursor: "pointer",
+              transition: "all 0.15s ease",
             }}
           >
-            <div style={{ fontSize: "14px", fontWeight: 700, marginBottom: "4px" }}>Manual Mode</div>
-            <p style={{ fontSize: "11.5px", color: "var(--text-muted)", lineHeight: 1.35 }}>
-              JobPilot prepares tailored artifacts. You manually copy and submit.
+            <div style={{ fontSize: "14px", fontWeight: 700, marginBottom: "6px" }}>Manual Mode</div>
+            <p style={{ fontSize: "12px", color: "var(--text-muted)", lineHeight: 1.45 }}>
+              JobPilot prepares tailored artifacts. You review and manually submit each one.
             </p>
           </div>
 
@@ -151,19 +153,20 @@ export default function AutomationSettingsPage() {
           <div
             onClick={() => setPolicy({ ...policy, mode: "ASSISTED" })}
             style={{
-              padding: "14px",
-              borderRadius: "4px",
+              padding: "16px",
+              borderRadius: "var(--radius-md)",
               background: policy.mode === "ASSISTED" ? "rgba(255, 255, 255, 0.08)" : "var(--bg-elevated)",
-              border: policy.mode === "ASSISTED" ? "1px solid rgba(255, 255, 255, 0.25)" : "1px solid var(--border-subtle)",
+              border: policy.mode === "ASSISTED" ? "1px solid var(--accent-primary)" : "1px solid var(--border-subtle)",
               cursor: "pointer",
+              transition: "all 0.15s ease",
             }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
               <span style={{ fontSize: "14px", fontWeight: 700 }}>Assisted Mode</span>
               <Badge variant="cyan" size="sm">Recommended</Badge>
             </div>
-            <p style={{ fontSize: "11.5px", color: "var(--text-muted)", lineHeight: 1.35 }}>
-              JobPilot prepares everything and presents a 1-click review modal for your approval.
+            <p style={{ fontSize: "12px", color: "var(--text-muted)", lineHeight: 1.45 }}>
+              JobPilot pre-stages applications in the dispatch queue for a 1-click approval.
             </p>
           </div>
 
@@ -171,24 +174,25 @@ export default function AutomationSettingsPage() {
           <div
             onClick={() => setPolicy({ ...policy, mode: "AUTONOMOUS" })}
             style={{
-              padding: "14px",
-              borderRadius: "4px",
+              padding: "16px",
+              borderRadius: "var(--radius-md)",
               background: policy.mode === "AUTONOMOUS" ? "rgba(255, 255, 255, 0.08)" : "var(--bg-elevated)",
-              border: policy.mode === "AUTONOMOUS" ? "1px solid rgba(255, 255, 255, 0.25)" : "1px solid var(--border-subtle)",
+              border: policy.mode === "AUTONOMOUS" ? "1px solid var(--accent-primary)" : "1px solid var(--border-subtle)",
               cursor: "pointer",
+              transition: "all 0.15s ease",
             }}
           >
-            <div style={{ fontSize: "14px", fontWeight: 700, marginBottom: "4px" }}>Autonomous Mode</div>
-            <p style={{ fontSize: "11.5px", color: "var(--text-muted)", lineHeight: 1.35 }}>
-              Automatically submits when all match scores and compensation rules match 100%.
+            <div style={{ fontSize: "14px", fontWeight: 700, marginBottom: "6px" }}>Autonomous Mode</div>
+            <p style={{ fontSize: "12px", color: "var(--text-muted)", lineHeight: 1.45 }}>
+              Automatically submits when all match scores and compensation criteria exceed your thresholds.
             </p>
           </div>
         </div>
       </Card>
 
       {/* 2. Numeric & Threshold Guardrails */}
-      <Card style={{ padding: "20px" }}>
-        <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "14px" }}>Constraint Thresholds</h3>
+      <Card style={{ padding: "22px" }}>
+        <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "16px" }}>Constraint Thresholds</h3>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
           <Input
@@ -212,31 +216,24 @@ export default function AutomationSettingsPage() {
             type="number"
             value={policy.salary_floor || 220000}
             onChange={(e) => setPolicy({ ...policy, salary_floor: parseInt(e.target.value) || 200000 })}
-            helperText="Rejects any opportunity below this compensation level."
+            helperText="Filters out opportunities below this compensation level."
           />
 
-          <div>
-            <label style={{ display: "block", fontSize: "12.5px", fontWeight: 500, color: "var(--text-muted)", marginBottom: "5px" }}>
-              Restricted / Excluded Companies
-            </label>
-            <input
-              type="text"
-              defaultValue="Current Employer, Legacy Corp"
-              style={{ width: "100%", padding: "7px 10px", fontSize: "13px" }}
-              placeholder="Comma-separated company names"
-            />
-            <div style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "4px" }}>
-              JobPilot will never view or submit to these companies.
-            </div>
-          </div>
+          <Input
+            label="Restricted / Excluded Companies"
+            type="text"
+            defaultValue="Current Employer, Legacy Corp"
+            helperText="JobPilot will never view or submit to these companies."
+            placeholder="Comma-separated company names"
+          />
         </div>
       </Card>
 
       {/* 3. Safety Checkboxes */}
-      <Card style={{ padding: "20px" }}>
-        <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "12px" }}>Safety & Review Checks</h3>
+      <Card style={{ padding: "22px" }}>
+        <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "14px" }}>Safety & Review Checks</h3>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
             <Checkbox
               checked={policy.require_review_for_senior_roles !== false}
