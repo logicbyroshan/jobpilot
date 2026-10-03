@@ -94,18 +94,18 @@ export default function SourcesPage() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
             <Badge variant="neutral">Integrations</Badge>
           </div>
-          <h1 style={{ fontSize: "22px", fontWeight: 700 }}>
+          <h1 style={{ fontSize: "24px", fontWeight: 800, letterSpacing: "-0.02em" }}>
             Connected Data Sources
           </h1>
-          <p style={{ color: "var(--text-muted)", fontSize: "13px", marginTop: "2px" }}>
-            Connect your accounts and resumes to automatically update your skills and job matches.
+          <p style={{ color: "var(--text-muted)", fontSize: "13.5px", marginTop: "4px" }}>
+            Connect your code repositories and professional profiles to automatically update your verified skills and match rankings.
           </p>
         </div>
 
@@ -129,12 +129,12 @@ export default function SourcesPage() {
       {syncNotice && (
         <div
           style={{
-            padding: "10px 14px",
-            borderRadius: "4px",
+            padding: "12px 16px",
+            borderRadius: "var(--radius-md)",
             background: "rgba(16, 185, 129, 0.1)",
             border: "1px solid rgba(16, 185, 129, 0.25)",
             color: "#34d399",
-            fontSize: "13px",
+            fontSize: "13.5px",
             fontWeight: 600,
             display: "flex",
             alignItems: "center",
@@ -157,15 +157,15 @@ export default function SourcesPage() {
               alignItems: "center",
               flexWrap: "wrap",
               gap: "14px",
-              padding: "16px 20px",
+              padding: "18px 22px",
             }}
           >
             <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
               <div
                 style={{
-                  width: "42px",
-                  height: "42px",
-                  borderRadius: "4px",
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "var(--radius-md)",
                   background: "var(--bg-elevated)",
                   border: "1px solid var(--border-subtle)",
                   display: "flex",
@@ -184,7 +184,7 @@ export default function SourcesPage() {
                     {src.status}
                   </Badge>
                 </div>
-                <div style={{ fontSize: "12px", color: "var(--text-dim)", marginTop: "2px" }}>
+                <div style={{ fontSize: "12.5px", color: "var(--text-dim)", marginTop: "3px" }}>
                   {src.source_url || "Verified document archive"} • Ingested <strong>{src.items_ingested_count || 12} items</strong> • Last synced: {new Date(src.last_synced_at || Date.now()).toLocaleTimeString()}
                 </div>
               </div>
@@ -210,11 +210,11 @@ export default function SourcesPage() {
         ))}
 
         {/* Additional Available Providers Card */}
-        <Card style={{ padding: "16px 20px", background: "rgba(255, 255, 255, 0.01)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+        <Card style={{ padding: "18px 22px", background: "rgba(255, 255, 255, 0.01)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
             <div>
-              <div style={{ fontSize: "14px", fontWeight: 600 }}>Connect Additional Portfolios & Code Platforms</div>
-              <div style={{ fontSize: "12px", color: "var(--text-dim)", marginTop: "2px" }}>
+              <div style={{ fontSize: "14.5px", fontWeight: 700 }}>Connect Additional Code Platforms & Profiles</div>
+              <div style={{ fontSize: "12.5px", color: "var(--text-dim)", marginTop: "2px" }}>
                 Import GitLab, Bitbucket, personal blogs, or patent registries.
               </div>
             </div>
@@ -238,7 +238,7 @@ export default function SourcesPage() {
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(7, 10, 18, 0.8)",
+            background: "rgba(0, 0, 0, 0.75)",
             backdropFilter: "blur(6px)",
             zIndex: 10000,
             display: "flex",
@@ -253,10 +253,10 @@ export default function SourcesPage() {
             style={{
               width: "100%",
               maxWidth: "480px",
-              background: "#0d1322",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: "8px",
-              boxShadow: "0 24px 48px rgba(0, 0, 0, 0.7)",
+              background: "var(--bg-card)",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: "var(--radius-lg)",
+              boxShadow: "var(--shadow-xl)",
               padding: "24px",
               display: "flex",
               flexDirection: "column",
@@ -269,7 +269,7 @@ export default function SourcesPage() {
                   <Plus size={18} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#f8fafc" }}>Connect Professional Source</h3>
+                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-main)" }}>Connect Professional Source</h3>
                   <p style={{ fontSize: "12px", color: "var(--text-dim)" }}>Extracts verifiable claims into your identity graph</p>
                 </div>
               </div>

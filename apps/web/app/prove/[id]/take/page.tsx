@@ -261,7 +261,7 @@ export default function ProctoredAssessmentTakePage() {
                 </Link>
                 <Link href="/opportunities" prefetch={true} style={{ textDecoration: "none" }}>
                   <Button variant="primary" size="md" icon={<Target size={15} />}>
-                    View 12 Unlocked Opportunities →
+                    View {result.unlocked_opportunities_count || 12} Unlocked Opportunities →
                   </Button>
                 </Link>
               </div>

@@ -75,7 +75,7 @@ export default function OpportunityDetailPage() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div className="page-fade-in" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
       {/* Back Link */}
       <Link
         href="/opportunities"
@@ -83,8 +83,9 @@ export default function OpportunityDetailPage() {
           display: "inline-flex",
           alignItems: "center",
           gap: "6px",
-          color: "var(--text-muted)",
+          color: "var(--text-sub)",
           fontSize: "13px",
+          fontWeight: 600,
           textDecoration: "none",
           width: "fit-content",
         }}
@@ -95,13 +96,13 @@ export default function OpportunityDetailPage() {
 
       {/* Hero Opportunity Card */}
       <Card style={{ padding: "24px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px", marginBottom: "16px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px", marginBottom: "20px" }}>
           <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
             <div
               style={{
                 width: "48px",
                 height: "48px",
-                borderRadius: "6px",
+                borderRadius: "var(--radius-md)",
                 background: "var(--bg-elevated)",
                 border: "1px solid var(--border-subtle)",
                 display: "flex",
@@ -117,23 +118,23 @@ export default function OpportunityDetailPage() {
             </div>
 
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                <h1 style={{ fontSize: "20px", fontWeight: 700 }}>{job.title}</h1>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                <h1 style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "-0.02em" }}>{job.title}</h1>
                 <Badge variant={(match.overall_score || 0) >= 90 ? "success" : "cyan"} size="sm">
                   {(match.overall_score || 0).toFixed(0)}% Overall Fit
                 </Badge>
               </div>
 
-              <div style={{ display: "flex", gap: "14px", fontSize: "12.5px", color: "var(--text-dim)", marginTop: "4px", flexWrap: "wrap" }}>
-                <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  <Building2 size={13} /> {job.company?.name || "Company"}
+              <div style={{ display: "flex", gap: "16px", fontSize: "13px", color: "var(--text-sub)", marginTop: "6px", flexWrap: "wrap" }}>
+                <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <Building2 size={14} style={{ color: "var(--text-muted)" }} /> {job.company?.name || "Company"}
                 </span>
-                <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  <MapPin size={13} /> {job.location || "Remote"}
+                <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <MapPin size={14} style={{ color: "var(--text-muted)" }} /> {job.location || "Remote"}
                 </span>
                 {job.salary_min && (
-                  <span style={{ display: "flex", alignItems: "center", gap: "4px", color: "var(--accent-emerald)" }}>
-                    <DollarSign size={13} /> ${job.salary_min.toLocaleString()} - ${job.salary_max?.toLocaleString()} / yr
+                  <span style={{ display: "flex", alignItems: "center", gap: "5px", color: "var(--accent-emerald)", fontWeight: 600 }}>
+                    <DollarSign size={14} /> ${job.salary_min.toLocaleString()} - ${job.salary_max?.toLocaleString()} / yr
                   </span>
                 )}
               </div>
@@ -154,54 +155,54 @@ export default function OpportunityDetailPage() {
         </div>
 
         {/* 4-Dimensional Fit Radar */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px", background: "var(--bg-elevated)", padding: "12px", borderRadius: "4px", border: "1px solid var(--border-subtle)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "10px", background: "var(--bg-elevated)", padding: "14px 16px", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}>
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: "11px", color: "var(--text-dim)", textTransform: "uppercase" }}>Technical Fit</div>
-            <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--accent-cyan)", marginTop: "2px" }}>
+            <div style={{ fontSize: "11px", color: "var(--text-dim)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.04em" }}>Technical Fit</div>
+            <div style={{ fontSize: "18px", fontWeight: 800, color: "var(--accent-cyan)", marginTop: "4px" }}>
               {(match.technical_fit || 0).toFixed(0)}%
             </div>
           </div>
           <div style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)" }}>
-            <div style={{ fontSize: "11px", color: "var(--text-dim)", textTransform: "uppercase" }}>Experience Fit</div>
-            <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--accent-emerald)", marginTop: "2px" }}>
+            <div style={{ fontSize: "11px", color: "var(--text-dim)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.04em" }}>Experience Fit</div>
+            <div style={{ fontSize: "18px", fontWeight: 800, color: "var(--accent-emerald)", marginTop: "4px" }}>
               {(match.experience_fit || 0).toFixed(0)}%
             </div>
           </div>
           <div style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)" }}>
-            <div style={{ fontSize: "11px", color: "var(--text-dim)", textTransform: "uppercase" }}>Preference Fit</div>
-            <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--accent-primary)", marginTop: "2px" }}>
+            <div style={{ fontSize: "11px", color: "var(--text-dim)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.04em" }}>Preference Fit</div>
+            <div style={{ fontSize: "18px", fontWeight: 800, color: "var(--accent-primary)", marginTop: "4px" }}>
               {(match.preference_fit || 0).toFixed(0)}%
             </div>
           </div>
           <div style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)" }}>
-            <div style={{ fontSize: "11px", color: "var(--text-dim)", textTransform: "uppercase" }}>Evidence Proof</div>
-            <div style={{ fontSize: "16px", fontWeight: 700, color: "#ffffff", marginTop: "2px" }}>
+            <div style={{ fontSize: "11px", color: "var(--text-dim)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.04em" }}>Evidence Proof</div>
+            <div style={{ fontSize: "18px", fontWeight: 800, color: "#ffffff", marginTop: "4px" }}>
               {(match.evidence_confidence || 94).toFixed(0)}%
             </div>
           </div>
         </div>
       </Card>
 
-      {/* WHY YOU MATCH & WHERE YOU ARE WEAK */}
+      {/* WHY YOU MATCH & SKILL DEFICITS */}
       <div className="grid-2">
         {/* Why You Match */}
-        <Card style={{ borderLeft: "3px solid var(--accent-emerald)" }}>
+        <Card style={{ borderLeft: "3px solid var(--accent-emerald)", padding: "20px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
             <CheckCircle2 size={16} color="var(--accent-emerald)" />
             <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Why You Match</h3>
           </div>
 
-          <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginBottom: "12px", lineHeight: 1.45 }}>
-            {match.explanation || "Strong technical and architectural alignment with deep evidence provenance."}
+          <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginBottom: "14px", lineHeight: 1.5 }}>
+            {match.explanation || "Strong technical and architectural alignment with verified evidence provenance."}
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {(match.matched_skills_json || []).map((sk) => (
               <div
                 key={sk}
                 style={{
-                  padding: "8px 10px",
-                  borderRadius: "4px",
+                  padding: "10px 12px",
+                  borderRadius: "var(--radius-sm)",
                   background: "rgba(16, 185, 129, 0.05)",
                   border: "1px solid rgba(16, 185, 129, 0.2)",
                   display: "flex",
@@ -209,22 +210,22 @@ export default function OpportunityDetailPage() {
                   alignItems: "center",
                 }}
               >
-                <span style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-main)" }}>✓ {sk}</span>
-                <Badge variant="success" size="sm">Verified Proof</Badge>
+                <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-main)" }}>✓ {sk}</span>
+                <Badge variant="success" size="sm">Verified</Badge>
               </div>
             ))}
           </div>
         </Card>
 
-        {/* Where You Are Weak / Gaps */}
-        <Card style={{ borderLeft: "3px solid var(--accent-amber)" }}>
+        {/* Skill Deficits */}
+        <Card style={{ borderLeft: "3px solid var(--accent-amber)", padding: "20px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
             <AlertTriangle size={16} color="var(--accent-amber)" />
-            <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Where You Are Weak</h3>
+            <h3 style={{ fontSize: "15px", fontWeight: 700 }}>Skill Gaps & Deficits</h3>
           </div>
 
-          <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginBottom: "12px", lineHeight: 1.45 }}>
-            Identified competency deficits preventing top-tier compensation tier. Closing these unlocks full offer capability.
+          <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginBottom: "14px", lineHeight: 1.5 }}>
+            Competency deficits identified for this position. Closing these increases your match ranking and offer probability.
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -234,28 +235,30 @@ export default function OpportunityDetailPage() {
                   key={sk}
                   style={{
                     padding: "10px 12px",
-                    borderRadius: "4px",
+                    borderRadius: "var(--radius-sm)",
                     background: "rgba(245, 158, 11, 0.05)",
                     border: "1px solid rgba(245, 158, 11, 0.2)",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: "8px",
                   }}
                 >
                   <div>
                     <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-main)" }}>{sk}</div>
-                    <div style={{ fontSize: "11px", color: "var(--text-dim)" }}>Required by team • Level 3.0 → Target 6.5</div>
+                    <div style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "2px" }}>Required by hiring team • Target 6.5+</div>
                   </div>
                   <Link href="/improve" style={{ textDecoration: "none" }}>
                     <Button variant="secondary" size="sm">
-                      Close Gap in Improve →
+                      Close Gap →
                     </Button>
                   </Link>
                 </div>
               ))
             ) : (
-              <div style={{ fontSize: "12px", color: "var(--accent-emerald)" }}>
-                No critical skill deficits detected for this role!
+              <div style={{ fontSize: "13px", color: "var(--accent-emerald)", fontWeight: 600 }}>
+                ✓ No critical skill deficits detected for this role.
               </div>
             )}
           </div>
@@ -263,8 +266,8 @@ export default function OpportunityDetailPage() {
       </div>
 
       {/* Role Responsibilities & Requirements Matrix */}
-      <Card>
-        <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "12px" }}>Requirements vs Your Evidence Matrix</h3>
+      <Card style={{ padding: "20px" }}>
+        <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "14px" }}>Role Responsibilities & Technical Scope</h3>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {(job.responsibilities_json || [
@@ -274,12 +277,13 @@ export default function OpportunityDetailPage() {
             <div
               key={i}
               style={{
-                padding: "10px 12px",
-                borderRadius: "4px",
+                padding: "10px 14px",
+                borderRadius: "var(--radius-sm)",
                 background: "var(--bg-elevated)",
                 border: "1px solid var(--border-subtle)",
-                fontSize: "12.5px",
-                lineHeight: 1.4,
+                fontSize: "13px",
+                lineHeight: 1.5,
+                color: "var(--text-sub)",
               }}
             >
               • {resp}
