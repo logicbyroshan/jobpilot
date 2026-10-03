@@ -139,7 +139,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v
 
 function getAuthHeaders(): HeadersInit {
   if (typeof window === 'undefined') return { 'Content-Type': 'application/json' };
-  const token = localStorage.getItem('jobpilot_auth_token') || 'demo-token';
+  const token = localStorage.getItem('jobpilot_token') || localStorage.getItem('jobpilot_auth_token') || 'demo-token';
   return {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,

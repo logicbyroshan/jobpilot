@@ -160,7 +160,7 @@ export default function ProvePage() {
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <span style={{ color: "var(--text-dim)" }}>Passing Score:</span>
-                  <span style={{ fontWeight: 600, color: "var(--accent-emerald)" }}>{asm.passing_score_pct}% or higher</span>
+                  <span style={{ fontWeight: 600, color: "var(--accent-emerald)" }}>{asm.passing_score || (asm as any).passing_score_pct || 80}% or higher</span>
                 </div>
               </div>
             </div>

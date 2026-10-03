@@ -368,7 +368,7 @@ export default function ApplicationsPage() {
               >
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ fontSize: "14px", fontWeight: 700 }}>{ex.job_title || "Senior Infrastructure Engineer"}</span>
+                    <span style={{ fontSize: "14px", fontWeight: 700 }}>{ex.role_title || ex.job_title || "Senior Infrastructure Engineer"}</span>
                     <Badge variant="cyan" size="sm">{ex.match_score || 94}% Fit</Badge>
                   </div>
                   <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>

@@ -64,7 +64,7 @@ export default function ImprovePage() {
       await api.updateTaskStatus(taskId, newStatus);
       const refreshed = await api.getDailyPlan();
       setDailyPlan(refreshed);
-      if (newStatus === "COMPLETED") {
+      if (newStatus === "COMPLETED" || newStatus === "DONE") {
         showToast("Task marked complete! Competency score boosted.", "success");
       } else {
         showToast(`Task moved to ${newStatus}`, "info");
